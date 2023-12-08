@@ -10,9 +10,13 @@ class ProductManager {
     static lastId = 0
 
     addProduct = (product) => {
-        let props = Object.keys(product)
 
-        if (props.includes("title") & props.includes("description") & props.includes("code") & props.includes("thumbnail") & props.includes("price") & props.includes("stock")){
+        if (product.title &&
+            product.description &&
+            product.price &&
+            product.thumbnail &&
+            product.code &&
+            product.stock){
             
             if (this.products.find((prod)=>prod.code==product.code)){
                 console.log("Este producto tiene un código ya utilizado")
@@ -25,8 +29,9 @@ class ProductManager {
         }else {console.log("Se ingresó un producto incorrecto, verifique los campos obligatorios")}
     }
     getProductById = (id) => {
-        if(this.products.find((prod)=>prod.id==id)){
-            return this.products.find((prod)=>prod.id==id)
+        let productById= this.products.find((prod)=>prod.id==id)
+        if(productById){
+            return productById
         }else{
             console.log("Not found")
             return}
@@ -51,7 +56,7 @@ const PM = new ProductManager()
 
 /* const product1=new Product("Producto 1","Producto nuevo",420,"Enlace",123,6900)
 const product2=new Product("Producto 2","Producto fachero",912,"Enlace",123,700)
-const product3=new Product("Producto 2","Producto fachero",912,"Enlace",12,700)
+const product3=new Product("","Producto fachero",77,"Enlace",12,700)
 console.log(PM.getProducts())
 console.log(PM.getProductById(69))
 PM.addProduct(product1)
