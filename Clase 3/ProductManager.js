@@ -1,4 +1,5 @@
-const { promises: fs } = require('fs')
+const { promises: fs ,existsSync} = require('fs');
+const { validateHeaderName } = require('http');
 
 class ProductManager {
     constructor(){
@@ -39,11 +40,11 @@ class ProductManager {
             product.thumbnail &&
             product.code &&
             product.stock){
-            
-            if (productos.find((prod)=>prod.code==product.code)){
+            let validarExist= existsSync(this.path)
+            if (validarExist && productos.find((prod)=>prod.code==product.code)){
                 console.log("Este producto tiene un código ya utilizado")
-            }else {
-            product.id= productos.lenght+1
+            }else if (validarExist) {
+            product.id= productos.length+1
             productos.push(product)
             fs.writeFile(this.path,JSON.stringify(productos,null,2),"utf-8")
             }
@@ -128,11 +129,12 @@ class Product {
 }
 
 const PM = new ProductManager()
+
 //Código de testeo
 
 /* const product1=new Product("Producto 1","Producto nuevo",420,"Enlace",123,6900)
 const product2=new Product("Producto 2","Producto fachero",912,"Enlace",1234,700)
 const product3=new Product("P3","Producto fachero",77,"Enlace",12,700)
-console.log(PM.getProducts())
-console.log(PM.getProductById(0))
-PM.addProduct(product2) */
+
+*/
+
