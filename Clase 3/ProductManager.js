@@ -1,77 +1,57 @@
-const { promises: fs ,existsSync} = require('fs');
-const { validateHeaderName } = require('http');
+const fs = require("fs")
+const { promises, existsSync} = require('fs')
+
 
 class ProductManager {
     constructor(){
         this.path="./products.json"
         this.readFileOrCreateNewOne()
     }
-    readFileOrCreateNewOne = async()=> {
-        try {
-          await fs.readFile(this.path, "utf-8");
-        } catch (error) {
-          error.code === "ENOENT"? this.createEmptyFile() : console.log(error)
-        }
-      }
 
-    createEmptyFile= async() => {
-        fs.writeFile(this.path, "[]", (error) => {
-          error? console.log(error): console.log(error)
-        });
-      }
-    
-    getProducts = async() => {
-        try{
-            const dataJson = await fs.readFile(this.path)
-            return JSON.parse(dataJson)
-        } catch (error) {
-            console.log(error)
-        }
+    readFileOrCreateNewOne = ()=> {
+        existsSync(this.path)? fs.readFileSync(this.path) : fs.writeFileSync(this.path, "[]")
     }
 
+    getProducts = () => {
+            const dataJson = fs.readFileSync(this.path, "utf-8")
+            return JSON.parse(dataJson)
+        } 
+
     
 
-    addProduct = async (product) => {
-        try {
-        let productos= await this.getProducts()
+    addProduct = (product) => {
         if (product.title &&
             product.description &&
             product.price &&
             product.thumbnail &&
             product.code &&
             product.stock){
-            let validarExist= existsSync(this.path)
-            if (validarExist && productos.find((prod)=>prod.code==product.code)){
+            let productos= this.getProducts()
+            if (productos.find((prod)=>prod.code==product.code)){
                 console.log("Este producto tiene un código ya utilizado")
-            }else if (validarExist) {
+            }else {
             product.id= productos.length+1
             productos.push(product)
-            fs.writeFile(this.path,JSON.stringify(productos,null,2),"utf-8")
+            fs.writeFileSync(this.path,JSON.stringify(productos,null,2),"utf-8")
             }
-            
-        }else {console.log("Se ingresó un producto incorrecto, verifique los campos obligatorios")}
-    } catch(err) {
-        console.log(err)
+        }else {
+        console.log("Se ingresó un producto incorrecto, verifique los campos obligatorios")}
     }
-    }
-    getProductById = async (id) => {
-        try{
-        const productos = await this.getProducts()
-        const productById= productos.find((prod)=>prod.id==id)
+
+
+    getProductById = (id) => {
+        const data= this.getProducts()
+        const productById = data.find((prod)=>prod.id==id)
         if(productById){
             return productById
         }else{
-            console.log("Not found")
+            console.log("Id not found")
             return}
-        }catch (err) {
-            console.log(err)
-        }
     }
 
-    updateProduct = async (id,update) => {
-        try{
-            let data= await this.getProducts()
-            let producto = data.find((prod)=>prod.id==id)
+    updateProduct = (id,update) => {
+            const data= this.getProducts()
+            let  producto = data.find((prod)=>prod.id==id)
             if (producto){
                 producto = {...producto,...update,...{id:id}}
                 if (producto.title &&
@@ -81,7 +61,7 @@ class ProductManager {
                     producto.code &&
                     producto.stock){
                         data[data.findIndex(prod => prod.id==id)]=producto
-                        await fs.writeFile(this.path,JSON.stringify(data,null,2),"utf-8")
+                        fs.writeFileSync(this.path,JSON.stringify(data,null,2),"utf-8")
                         return console.log("Producto actualizado exitosamente")
                     }else {
                         console.log("Se ingresó un producto incorrecto, verifique los campos obligatorios")
@@ -90,20 +70,15 @@ class ProductManager {
             } else {
             return console.log("Id not found")
             }
-
-        } catch (err) {
-            console.log(err)
-        }
     }
 
-    deleteProduct = async (id) => {
+    deleteProduct = (id) => {
         try{
-            const data = await this.getProducts()
-            const producto = data.find((prod)=>prod.id==id)
-            if (producto){
-                let indexToDel = data.findIndex(prod => prod.id==id)
-                data.splice(indexToDel,1)
-                await fs.writeFile(this.path,JSON.stringify(data,null,2),"utf-8")
+            const data = this.getProducts()
+            const productoId = data.findIndex(prod => prod.id==id)
+            if (productoId!=-1){
+                data.splice(productoId,1)
+                fs.writeFileSync(this.path,JSON.stringify(data,null,2),"utf-8")
                 return console.log("Elemento borrado exitosamente")
             } else {
                 return console.log("Id not found")
@@ -131,10 +106,18 @@ class Product {
 const PM = new ProductManager()
 
 //Código de testeo
+/* 
+const product1=new Product("Remera Chainsaw Man","Producto original",420,"Enlace",123,6900)
+const product2=new Product("Producto repetido","Code ya utilizado",912,"Enlace",123,700)
+const product3=new Product("Drone","Drone importado de China",77,"Enlace",12,700)
 
-/* const product1=new Product("Producto 1","Producto nuevo",420,"Enlace",123,6900)
-const product2=new Product("Producto 2","Producto fachero",912,"Enlace",1234,700)
-const product3=new Product("P3","Producto fachero",77,"Enlace",12,700)
-
-*/
+ PM.addProduct(product2)
+console.log(PM.getProductById(0))
+PM.addProduct(product3)
+console.log(PM.getProducts)
+PM.deleteProduct(2)
+PM.updateProduct(1,product3)
+PM.addProduct(product1)
+console.log(PM.getProducts)
+ */
 
