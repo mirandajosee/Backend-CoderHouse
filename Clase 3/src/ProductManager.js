@@ -1,8 +1,10 @@
-const fs = require("fs")
-const { promises, existsSync} = require('fs')
+//const fs = require("fs")
+//const { promises, existsSync} = require('fs')
+import fs from "node:fs"
+import { promises, existsSync} from "node:fs"
 
 
-class ProductManager {
+export class ProductManager {
     constructor(){
         this.path="./products.json"
         this.readFileOrCreateNewOne()
@@ -92,7 +94,7 @@ class ProductManager {
 
 }
 
-class Product {
+export class Product {
     constructor(title,description,price,thumbnail,code,stock){
         this.title=title
         this.thumbnail=thumbnail
@@ -102,8 +104,6 @@ class Product {
         this.description=description
     }
 }
-
-const PM = new ProductManager()
 
 //Código de testeo
 /* 
