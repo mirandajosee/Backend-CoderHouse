@@ -8,7 +8,7 @@ export class CartManager {
     }
 
     createCart = () => {
-        const lastId= this.carts.length>=carts[-1].id? this.carts.length++ : carts[-1].id++
+        const lastId= this.carts.length>=carts.slice(-1)[0].id? this.carts.length++ : carts.slice(-1)[0].id++
         const newCart = {
             id: lastId,
             products: []
@@ -35,7 +35,10 @@ export class CartManager {
 
     getCartById = (id) => {
         const cart = this.carts.find(cart => cart.id == id)
-        return cart
+        if (cart){return cart}
+        else{
+            return console.log("Error 404, no se encontró este cart")
+        }
     }
 
     saveCartsToFile = () => {

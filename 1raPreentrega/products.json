@@ -1,7 +1,9 @@
 [
   {
     "title": "Remera Chainsaw Man",
-    "thumbnail": ["Enlace1"],
+    "thumbnail": [
+      "Enlace1"
+    ],
     "price": 4200,
     "stock": 500,
     "code": 1,
@@ -11,7 +13,9 @@
   },
   {
     "title": "Remera Naruto",
-    "thumbnail": ["Enlace2"],
+    "thumbnail": [
+      "Enlace2"
+    ],
     "price": 9000,
     "stock": 700,
     "code": 2,
@@ -21,7 +25,9 @@
   },
   {
     "title": "Drone",
-    "thumbnail": ["Enlace3"],
+    "thumbnail": [
+      "Enlace3"
+    ],
     "price": 35000,
     "stock": 600,
     "code": 3,
@@ -31,7 +37,9 @@
   },
   {
     "title": "Remera JoJo's Bizarre Adventure",
-    "thumbnail": ["Enlace4"],
+    "thumbnail": [
+      "Enlace4"
+    ],
     "price": 5000,
     "stock": 50,
     "code": 4,
@@ -41,7 +49,9 @@
   },
   {
     "title": "Termo eléctrico",
-    "thumbnail": ["Enlace5"],
+    "thumbnail": [
+      "Enlace5"
+    ],
     "price": 50000,
     "stock": 800,
     "code": 5,
@@ -51,7 +61,9 @@
   },
   {
     "title": "Remera Mirai Nikki",
-    "thumbnail": ["Enlace6"],
+    "thumbnail": [
+      "Enlace6"
+    ],
     "price": 7000,
     "stock": 810,
     "code": 6,
@@ -61,7 +73,9 @@
   },
   {
     "title": "Nintendo switch",
-    "thumbnail": ["Enlace7"],
+    "thumbnail": [
+      "Enlace7"
+    ],
     "price": 500000,
     "stock": 25,
     "code": 7,
@@ -71,7 +85,9 @@
   },
   {
     "title": "Figura de Freezer - Dragon Ball Z",
-    "thumbnail": ["Enlace8"],
+    "thumbnail": [
+      "Enlace8"
+    ],
     "price": 15000,
     "stock": 500,
     "code": 8,
@@ -80,23 +96,25 @@
     "status": true
   },
   {
-    "title": "Death Note",
-    "thumbnail": ["Enlace9"],
-    "price": 10000,
-    "stock": 666,
+    "title": "Robot aspiradora",
+    "thumbnail": [
+      "Enlace9"
+    ],
+    "price": 150000,
+    "stock": 500,
     "code": 9,
-    "description": "Cuaderno de 250 páginas, incluye pluma para escribir",
+    "description": "Producto traido desde China. No detecta elementos. Choca mucho pero limpia y trapea",
     "id": 9,
     "status": true
   },
   {
-    "title": "Robot aspiradora",
-    "thumbnail": ["Enlace10"],
+    "title": "Robot aspiradora 2",
     "price": 150000,
     "stock": 500,
     "code": 10,
     "description": "Producto traido desde China. No detecta elementos. Choca mucho pero limpia y trapea",
     "id": 10,
-    "status": true
+    "status": true,
+    "thumbnail": []
   }
 ]

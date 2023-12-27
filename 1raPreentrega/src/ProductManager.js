@@ -32,7 +32,7 @@ export class ProductManager {
                 console.log("Este producto tiene un código ya utilizado")
             }else {
             product.status = product.status===false? product.status : true
-            const lastId=productos.length>=productos[-1].id? productos.length : productos[-1].id
+            const lastId=productos.length>=productos.slice(-1)[0].id? productos.length : productos.slice(-1)[0].id
             product.id= lastId+1
             productos.push(product)
             fs.writeFileSync(this.path,JSON.stringify(productos,null,2),"utf-8")
