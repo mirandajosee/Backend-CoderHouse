@@ -32,6 +32,7 @@ export class ProductManager {
             if (productos.find((prod)=>prod.code==product.code)){
                 console.log("Este producto tiene un código ya utilizado")
             }else {
+            product.status = product.status? product.status : true
             product.id= productos.length+1
             productos.push(product)
             fs.writeFileSync(this.path,JSON.stringify(productos,null,2),"utf-8")
