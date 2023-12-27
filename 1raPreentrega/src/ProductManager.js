@@ -1,6 +1,6 @@
 //const fs = require("fs")
 //const { promises, existsSync} = require('fs')
-import fs from "node:fs"
+import fs, { stat } from "node:fs"
 import { promises, existsSync} from "node:fs"
 
 
@@ -22,12 +22,12 @@ export class ProductManager {
     
 
     addProduct = (product) => {
-        if (product.title &&
-            product.description &&
-            product.price &&
-            product.thumbnail &&
-            product.code &&
-            product.stock){
+        product.thumbnail=Array.isArray(product.thumbnail)? product.thumbnail:[]
+        if (typeof (product.title)==="string" &&
+            typeof (product.description)==="string" &&
+            !isNaN(product.price) &&
+            !isNaN(product.code) &&
+            !isNaN(product.stock)){
             let productos= this.getProducts()
             if (productos.find((prod)=>prod.code==product.code)){
                 console.log("Este producto tiene un código ya utilizado")
@@ -57,12 +57,12 @@ export class ProductManager {
             let  producto = data.find((prod)=>prod.id==id)
             if (producto){
                 producto = {...producto,...update,...{id:id}}
-                if (producto.title &&
-                    producto.description &&
-                    producto.price &&
-                    producto.thumbnail &&
-                    producto.code &&
-                    producto.stock){
+                if (typeof (producto.title)==="string" &&
+                typeof (producto.description)==="string" &&
+                !isNaN(producto.price) &&
+                Array.isArray(producto.thumbnail) &&
+                !isNaN(producto.code) &&
+                !isNaN(producto.stock)){
                         data[data.findIndex(prod => prod.id==id)]=producto
                         fs.writeFileSync(this.path,JSON.stringify(data,null,2),"utf-8")
                         return console.log("Producto actualizado exitosamente")
@@ -94,13 +94,14 @@ export class ProductManager {
 }
 
 export class Product {
-    constructor(title,description,price,thumbnail,code,stock){
+    constructor(title,description,price,thumbnail,code,stock,status=true){
         this.title=title
         this.thumbnail=thumbnail
         this.price=price
         this.stock=stock
         this.code=code
         this.description=description
+        this.status=status
     }
 }
 
