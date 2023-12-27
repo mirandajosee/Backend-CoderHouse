@@ -7,7 +7,7 @@ const CM=new CartManager()
 const app = express()
 
 app.use(express.urlencoded({extended:true}));
-app.use(express.json());
+app.use(express.json())
 
 // Rutas para los productos
 
@@ -23,22 +23,22 @@ app.get('/api/products/:pid',(req,res) =>{
 })
 
 app.post('/api/products', (req, res) => {
-    const newProduct = req.body;
-    PM.addProduct(newProduct);
-    res.json(newProduct);
+    const newProduct = req.body
+    PM.addProduct(newProduct)
+    res.json(newProduct)
 });
 
 app.put('/api/products/:pid', (req, res) => {
-    const updatedProduct = req.body;
+    const updatedProduct = req.body
     let id = parseInt(req.params.pid)
 
     if (isNaN(id)) {
-        res.status(400).json({ error: 'Formato de id inválido' });
+        res.status(400).json({ error: 'Formato de id inválido' })
         return;
     }
 
     PM.updateProduct(id, updatedProduct);
-    res.json(updatedProduct);
+    res.json(updatedProduct)
 });
 
 app.delete('/api/products/:pid', (req, res) => {
@@ -50,7 +50,7 @@ app.delete('/api/products/:pid', (req, res) => {
     }
 
     PM.deleteProduct(id);
-    res.json({ Resultado: 'Producto eliminado correctamente' });
+    res.json({ Resultado: 'Producto eliminado correctamente' })
 
 });
 
@@ -59,26 +59,26 @@ app.delete('/api/products/:pid', (req, res) => {
 
 
 app.post('/api/carts', (req, res) => {
-    const newCart = CM.createCart();
-    console.log(newCart);
-    res.json(newCart);
+    const newCart = CM.createCart()
+    console.log(newCart)
+    res.json(newCart)
 });
 
 app.get('/api/carts/:cid', (req, res) => {
-    let cartId = req.params.cid;
-    const cart = CM.getCartById(cartId);
+    let cartId = req.params.cid
+    const cart = CM.getCartById(cartId)
     if (cart) {
-        res.json(cart.products);
+        res.json(cart.products)
     } else {
-        res.status(404).json({ error: 'Carrito no encontrado' });
+        res.status(404).json({ error: 'Carrito no encontrado' })
     }
 });
 
 app.post('/api/carts/:cid/product/:pid', (req, res) => {
-    let cartId = req.params.cid;
-    let productId = req.params.pid;
-    CM.addProductToCart(cartId, productId);
-    res.json({ success: true });
+    let cartId = req.params.cid
+    let productId = req.params.pid
+    CM.addProductToCart(cartId, productId)
+    res.json({ success: true })
 });
 
 app.listen(8080, ()=>{
