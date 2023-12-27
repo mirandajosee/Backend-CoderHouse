@@ -90,8 +90,6 @@ export class ProductManager {
             console.log(err)
         }
     }
-
-
 }
 
 export class Product {
