@@ -1,18 +1,21 @@
 import fs from "node:fs"
 
 export class CartManager {
-    constructor(filePath) {
-        this.path = filePath
+    constructor() {
+        this.path = "./carts.json"
         this.carts = []
         this.loadCartsFromFile()
     }
 
     createCart = () => {
-        const lastId= this.carts.length>=carts.slice(-1)[0].id? this.carts.length++ : carts.slice(-1)[0].id++
+
+        const lastId = this.carts.slice(-1)[0]? Math.max(this.carts.length,this.carts.slice(-1)[0].id)+1 : 1
+        
+        
         const newCart = {
             id: lastId,
             products: []
-        };
+        }
         this.carts.push(newCart)
         this.saveCartsToFile()
         console.log('carrito creado')
@@ -22,7 +25,7 @@ export class CartManager {
     addProductToCart = (cartId, productId) => {
         const cart = this.getCartById(cartId)
         if (cart) {
-            const existingProduct = cart.products.find(product => product.id === productId);
+            const existingProduct = cart.products.find(product => product.product === productId);
             if (existingProduct) {
                 existingProduct.quantity++
             } else {
