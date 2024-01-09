@@ -4,12 +4,14 @@ import { cartRouter } from "../routes/cartRoutes.js"
 import { viewsRouter } from "../routes/viewsRoutes.js"
 import { Server as ServerIO } from "socket.io"
 import  __dirname from "../utils.js"
-import handlebars from "express-handlebars"
+import { create } from "express-handlebars"
 import { ProductManager } from "./ProductManager.js"
 import cors from "cors"
+
 const productManager= new ProductManager()
 const PORT = 8080
 const app = express()
+const handlebars = create({})
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json())
@@ -29,7 +31,7 @@ const httpServer= app.listen(PORT, ()=>{
 let productList=[]
 const io = new ServerIO(httpServer)
 
-app.engine('handlebars',handlebars.engine())
+app.engine('handlebars', handlebars.engine)
 app.set('views',__dirname+'/views');
 app.set('view engine','handlebars');
 app.use(express.static(__dirname+'/public'))
