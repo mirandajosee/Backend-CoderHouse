@@ -1,3 +1,3 @@
 if (typeof socket === 'undefined') {
-    const socket = io();
+    const socket = io()
 }
