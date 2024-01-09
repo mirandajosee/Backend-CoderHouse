@@ -108,13 +108,13 @@
     "status": true
   },
   {
-    "title": "Robot aspiradora 2",
-    "price": 150000,
-    "stock": 500,
-    "code": 10,
-    "description": "Producto traido desde China. No detecta elementos. Choca mucho pero limpia y trapea",
-    "id": 10,
+    "title": "Robot aspiradora 8",
+    "description": "Producto traido desde China. Detecta elementos. Choca mucho pero limpia y trapea",
+    "price": "200000",
+    "thumbnail": [],
+    "code": "10",
+    "stock": "350",
     "status": true,
-    "thumbnail": []
+    "id": 10
   }
 ]

@@ -21,7 +21,8 @@ export class ProductManager {
     
 
     addProduct = (product) => {
-        product.thumbnail=Array.isArray(product.thumbnail)? product.thumbnail:[]
+        product.thumbnail=product.thumbnail? [].push(product.thumbnail):[]
+        //product.thumbnail=Array.isArray(product.thumbnail)? product.thumbnail:[]
         if (typeof (product.title)==="string" &&
             typeof (product.description)==="string" &&
             !isNaN(product.price) &&
@@ -33,6 +34,7 @@ export class ProductManager {
             }else {
             product.status = product.status===false? product.status : true
             const lastId=productos.slice(-1)[0]? Math.max(productos.length , productos.slice(-1)[0].id)+1 : 1
+            product.id=lastId
             productos.push(product)
             fs.writeFileSync(this.path,JSON.stringify(productos,null,2),"utf-8")
             }
