@@ -6,14 +6,15 @@ const productManager = new ProductManager();
 
 
 viewsRouter.get('/',(req,res)=>{
-    res.render('index', {});
+    const products = productManager.getProducts();
+    res.render('index', { products });
 });
 
 
 //Vista de home
 viewsRouter.get('/home', (req, res) => {
     const products = productManager.getProducts();
-    res.render('home', { products });
+    res.render('test', { products });
 });
 
 //Vista de real time products

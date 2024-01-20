@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real Time</title>
+    <script src="/js/index.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -28,7 +29,7 @@
     <input type="number" id="productPrice" name="price" required>
 
     <label for="thumbnail">Thumbnail:</label>
-    <input type="text" id="productThumbnail" name="thumbnail" required>
+    <input type="text" id="productThumbnail" name="thumbnail">
 
     <label for="code">Código:</label>
     <input type="text" id="productCode" name="code" required>
@@ -59,8 +60,7 @@ function addProduct() {
             const newProductCode = codeInput.value.trim()
             const newProductStock = stockInput.value.trim()
 
-            if (newProductTitle!== '' && newProductDescription !== '' && newProductPrice !== ''
-            && newProductThumbnail !== '' && newProductCode !== ''
+            if (newProductTitle!== '' && newProductDescription !== '' && newProductPrice !== '' && newProductCode !== ''
             && newProductStock !== '') {
                 
             //Emitiendo newProduct
@@ -131,6 +131,6 @@ function deleteProduct() {
 </script>
 
 
-<script src="/js/index.js"></script>
+
 </body>
 </html>

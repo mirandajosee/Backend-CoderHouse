@@ -21,12 +21,16 @@ export class ProductManager {
     
 
     addProduct = (product) => {
-        product.thumbnail=product.thumbnail? [].push(product.thumbnail):[]
+        let tmb=[]
+        product.thumbnail? tmb.push(product.thumbnail): []
+        product.thumbnail=product.thumbnail? tmb:[]
+        product.price=Number(product.price)
+        product.stock=Number(product.stock)
         //product.thumbnail=Array.isArray(product.thumbnail)? product.thumbnail:[]
         if (typeof (product.title)==="string" &&
             typeof (product.description)==="string" &&
             !isNaN(product.price) &&
-            !isNaN(product.code) &&
+            typeof (product.code)==="string" &&
             !isNaN(product.stock)){
             let productos= this.getProducts()
             if (productos.find((prod)=>prod.code==product.code)){
@@ -58,11 +62,13 @@ export class ProductManager {
             let  producto = data.find((prod)=>prod.id==id)
             if (producto){
                 producto = {...producto,...update,...{id:id}}
+                producto.price=Number(producto.price)
+                producto.stock=Number(producto.stock)
                 if (typeof (producto.title)==="string" &&
                 typeof (producto.description)==="string" &&
                 !isNaN(producto.price) &&
                 Array.isArray(producto.thumbnail) &&
-                !isNaN(producto.code) &&
+                typeof (producto.code)==="string" &&
                 !isNaN(producto.stock)){
                         data[data.findIndex(prod => prod.id==id)]=producto
                         fs.writeFileSync(this.path,JSON.stringify(data,null,2),"utf-8")
