@@ -1,4 +1,4 @@
-import { ProductManager,Product } from "../src/ProductManager.js"
+import { ProductManager, Product } from "../dao/ProductManager.js"
 import {Router} from "express"
 
 const PM= new ProductManager()

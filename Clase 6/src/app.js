@@ -5,11 +5,11 @@ import { viewsRouter } from "../routes/viewsRoutes.js"
 import { Server as ServerIO } from "socket.io"
 import  __dirname from "../utils.js"
 import { create } from "express-handlebars"
-import { ProductManager } from "./ProductManager.js"
+import { ProductManager } from "../dao/ProductManager.js"
 import cors from "cors"
 
 const productManager= new ProductManager()
-const PORT = 8080
+const PORT = 8080 || window.location.port
 const app = express()
 const handlebars = create({})
 
@@ -25,11 +25,12 @@ app.use('/api/carts/', cartRouter)
 app.use('/',viewsRouter)
 
 const httpServer= app.listen(PORT, ()=>{
-    console.log('Escuchando en el puerto 8080')
+    console.log(`Escuchando en el puerto ${PORT}`)
 })
 
 let productList=[]
 const io = new ServerIO(httpServer)
+let mensajes = []
 
 app.engine('handlebars', handlebars.engine)
 app.set('views',__dirname+'/views');
@@ -56,4 +57,11 @@ io.on('connection', socket=> {
         // Emitiendo updateList
         io.emit('updateList', filteredList)
     });
+
+    socket.on('message', data => {
+        console.log(data)
+        mensajes.push(data)
+
+        io.emit('messageLogs', mensajes)
+    })
 })
