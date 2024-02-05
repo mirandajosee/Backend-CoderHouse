@@ -12,7 +12,7 @@
 
     <ul id="productList">
   {{#each products}}
-    <li>{{this.title}} | ID {{this.id}}</li>
+    <li>{{this.title}} | ID {{this._id}}</li>
   {{/each}}
 </ul>
 
@@ -95,7 +95,7 @@ function updateBrowserList(products) {
   productListElement.innerHTML = '';
     products.forEach(product => {
         const productItem = document.createElement('li');
-        productItem.textContent = `${product.title} | ID ${product.id}`;
+        productItem.textContent = `${product.title} | ID ${product.id||product._id}`;
         productListElement.appendChild(productItem);
     });
 }

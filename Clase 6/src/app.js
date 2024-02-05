@@ -9,7 +9,7 @@ import { ProductManager } from "../dao/ProductManager.js"
 import cors from "cors"
 
 const productManager= new ProductManager()
-const PORT = 8080 || window.location.port
+const PORT = 8080 || process.env.PORT
 const app = express()
 const handlebars = create({})
 

@@ -23,4 +23,8 @@ viewsRouter.get('/realtimeproducts', (req, res) => {
     res.render('realtimeproducts', { products });
 }); 
 
+viewsRouter.get('/chat', (req, res) => {
+    res.render('chat', { });
+}); 
+
 export {viewsRouter}

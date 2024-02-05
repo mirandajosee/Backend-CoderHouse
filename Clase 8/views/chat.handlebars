@@ -1,30 +1,33 @@
+<center>
 <div>
     <h1>Estás chateando con nuestro canal de soporte</h1>
 </div>
 <div>
+    
     <input id="chatbox" type="text">
+
 </div>
 <div id="messageLogs">
-
+</center>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.all.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io() // config para poder usar socket del lado del cliente
-    let user
+    let email
 
     Swal.fire({
         title: 'Identifícate',
         input: 'text',
-        text: 'Ingresá el usuario para identificarte en el chat',
+        text: 'Ingresá el email para identificarte en el chat',
         inputValidator: value =>{
             return !value && 'Necesitas ingresar el nombre de usuario para continuar..'
         },
         allowOutsideClick: false
     }).then( result =>  {
-        user=result.value
-        socket.emit('message', { user, message: `${user} acaba de iniciar sesión` })
+        email=result.value
+        socket.emit('message', { email, message: `${email} acaba de iniciar sesión` })
     })
 
     socket.on('messageLogs', data => {
@@ -32,7 +35,7 @@
         let messageLogs = document.querySelector('#messageLogs')
         let mensajes = ''
         data.forEach(mensaje => {
-        mensajes += `<li>${mensaje.user}: ${mensaje.message}</li>` 
+        mensajes += `<li>${mensaje.email}: ${mensaje.message}</li>` 
         })
         messageLogs.innerHTML = mensajes
     })
@@ -42,7 +45,7 @@
     chatbox.addEventListener('keyup', (evt)=>{
         if(evt.key === 'Enter'){
             if(chatbox.value.trim().length > 0){
-                socket.emit('message', { user, message: chatbox.value })
+                socket.emit('message', { email, message: chatbox.value })
                 chatbox.value = ''
             }
         }
