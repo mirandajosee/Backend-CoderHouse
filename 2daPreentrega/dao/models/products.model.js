@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { createRequire } from 'node:module'
+const mongoosePaginate = createRequire(import.meta.url)("mongoose-paginate-v2")
 
 const prodCollection="products"
 const prodSchema = new mongoose.Schema({
@@ -18,5 +20,8 @@ const prodSchema = new mongoose.Schema({
         default: true},
     thumbnail: String
 })
+
+prodSchema.plugin(mongoosePaginate)
+
 
 export const productsModel = mongoose.model(prodCollection,prodSchema)

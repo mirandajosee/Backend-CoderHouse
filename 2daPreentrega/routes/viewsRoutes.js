@@ -10,14 +10,30 @@ const productManager = new ProductManager();
 
 
 viewsRouter.get('/',async (req,res)=>{
+    const {limit=10,pageQuery=1}=req.query
     try{
+        const {
+            docs,
+            hasPrevPage, 
+            hasNextPage,
+            prevPage, 
+            nextPage,
+            page 
+        } = await productsModel.paginate({}, {limit, page: pageQuery, sort: {price: -1}, lean: true})
+
     if (persistencia=="FS"){
     const products = productManager.getProducts()
     res.render('index', { products })}
 
     if(persistencia=="DB"){
         const products= await productsModel.find({}).lean()
-        res.render('index', { products })
+        res.render('index', { products,limit,
+            docs,
+            hasPrevPage, 
+            hasNextPage,
+            prevPage, 
+            nextPage,
+            page })
     }}
     catch(err){
         console.log(err)

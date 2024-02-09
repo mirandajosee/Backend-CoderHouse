@@ -86,9 +86,8 @@ io.on('connection', socket=> {
             io.emit('updateList', filteredList)}
 
             if (persistencia=="DB"){
-                const productList= await productsModel.find({}).lean()
-                const filteredList= productList.filter(product => product._id != productId._id)
-                await productsModel.findByIdAndDelete({_id:productId._id})
+                const filteredList= await productsModel.find({_id:{$nin:productId.id}}).lean()
+                await productsModel.findByIdAndDelete({_id:productId.id})
                 io.emit('updateList', filteredList)}
             }
         

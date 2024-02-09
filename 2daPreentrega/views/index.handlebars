@@ -8,10 +8,24 @@
 <body>
     <h1>Products list</h1>
     <ul>
-        {{#each products}}
+        {{#each docs}}
             <li>Nombre: {{this.title}} | Precio: {{this.price}}</li>
         {{/each}}
     </ul>
+{{#if hasNextPage}}
+            <a href="/?pageQuery={{nextPage}}&limit={{limit}}">Página Siguiente</a>
+{{/if}}
+
+{{#if hasPrevPage}}
+            <a href="/?pageQuery={{prevPage}}&limit={{limit}}">Página Anterior</a>
+{{/if}}
+
+<form id="limitForm">
+        <label for="title">Productos por página:</label>
+        <input type="number" id="limit" name="limit" required>
+
+
+</form>
 
 
 </script>
