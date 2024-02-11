@@ -9,7 +9,7 @@ const productRouter = Router()
 productRouter.get('/', async (req, res)=> {
     try{
     const limit = Number(req.query.limit)
-    const prods = await productsModel.find({})
+    const prods = await productsModel.find({}).lean()
 
     if (persistencia=="FS"){
     limit? res.json(PM.getProducts().slice(0,limit)) : res.json(PM.getProducts())} //Por FileSystem
