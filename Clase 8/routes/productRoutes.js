@@ -48,7 +48,7 @@ productRouter.post('/', async(req, res) => {
     PM.addProduct(newProduct)}
 
     if (persistencia=="DB"){
-    result= await productsModel.create(newProduct).lean()
+    result= await productsModel.create(newProduct)
     }
     res.json(result)}
 

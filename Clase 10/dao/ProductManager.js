@@ -112,19 +112,4 @@ export class Product {
     }
 }
 
-//Código de testeo
-/* 
-const product1=new Product("Remera Chainsaw Man","Producto original",420,"Enlace",123,6900)
-const product2=new Product("Producto repetido","Code ya utilizado",912,"Enlace",123,700)
-const product3=new Product("Drone","Drone importado de China",77,"Enlace",12,700)
-
- PM.addProduct(product2)
-console.log(PM.getProductById(0))
-PM.addProduct(product3)
-console.log(PM.getProducts)
-PM.deleteProduct(2)
-PM.updateProduct(1,product3)
-PM.addProduct(product1)
-console.log(PM.getProducts)
- */
 

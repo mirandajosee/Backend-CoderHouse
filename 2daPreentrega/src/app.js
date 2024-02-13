@@ -11,6 +11,7 @@ import { connectBD } from "../config/connectDB.js"
 import cors from "cors"
 import { productsModel } from "../dao/models/products.model.js"
 import { messagesModel } from "../dao/models/messages.model.js"
+import { cartsModel } from "../dao/models/carts.model.js"
 
 const productManager= new ProductManager()
 const PORT = 8080 || window.location.port
@@ -104,5 +105,21 @@ io.on('connection', socket=> {
         catch(err){
             console.log(err)
         }
+    })
+
+    socket.on("addToCart", async(data)=>{
+        try{
+            const productId=data.pid
+            const cartId=data.cid
+            const producto = await productsModel.findById({_id:productId}).lean()
+            if (producto){
+            const newProd = {product: productId, quantity:1}
+            const newCart = await cartsModel.findOneAndUpdate({_id:cartId},{$addToSet:{products:newProd}},{new:true}).lean()}
+            else{
+                res.status(400).send("Producto no encontrado")
+            }
+        }
+        catch(err)
+        {console.log(err)}
     })
 })

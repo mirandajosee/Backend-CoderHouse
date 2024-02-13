@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products List</title>
+    <title>Productos</title>
 </head>
 <body>
     <h1>Products list</h1>
     <ul>
         {{#each docs}}
-            <li>Nombre: {{this.title}} | Precio: {{this.price}}</li>
+            <p>Nombre: {{this.title}} | Precio: {{this.price}}</p>
+            <button onclick="addToCart(`{{this._id}}`)">Agregar al carrito</button>
         {{/each}}
     </ul>
 {{#if hasNextPage}}
@@ -34,6 +35,16 @@
 
 </center>
 
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    function addToCart(pid){
+        const socket=io()
+        socket.emit("addToCart",{
+            cid:"65ca19112dc0eaafade1935e",
+            pid:pid
+        })
+    }
+</script>
 <script>
     function updateSort(){
         let sort=document.getElementById('sort').value.trim()||`{{{sort}}}`

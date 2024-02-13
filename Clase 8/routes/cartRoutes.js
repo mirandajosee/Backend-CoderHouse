@@ -13,7 +13,7 @@ cartRouter.post('/', async(req, res) => {
             console.log(newCart)
             res.json(newCart)}
         if(persistencia=="DB"){
-            const newCart= await cartsModel.create({}).lean()
+            const newCart= await cartsModel.create({})
             res.json(newCart)
         }}
     catch(err){
