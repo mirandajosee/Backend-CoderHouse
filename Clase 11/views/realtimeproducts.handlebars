@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Time</title>
+    <script src="/js/index.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Real Time Products</h1>
+
+    <ul id="productList">
+  {{#each products}}
+    <li>{{this.title}} | ID {{this._id}}</li>
+  {{/each}}
+</ul>
+
+{{!-- Formulario para agregar producto desde el front --}}
+
+<form id="productForm">
+    <label for="title">Título del Producto:</label>
+    <input type="text" id="productTitle" name="title" required>
+
+    <label for="description">Descripción:</label>
+    <input type="text" id="productDescription" name="description" required>
+
+    <label for="price">Precio:</label>
+    <input type="number" id="productPrice" name="price" required>
+
+    <label for="thumbnail">Thumbnail:</label>
+    <input type="text" id="productThumbnail" name="thumbnail">
+
+    <label for="code">Código:</label>
+    <input type="text" id="productCode" name="code" required>
+
+    <label for="stock">Stock:</label>
+    <input type="number" id="productStock" name="stock" required>
+
+    <button type="button" onclick="addProduct()">Agregar producto</button>
+</form>
+
+
+{{!-- Lo que hace el evento addProduct--}}
+
+<script> 
+const socket = io();
+function addProduct() {
+            let titleInput = document.getElementById('productTitle')
+            let descriptionInput = document.getElementById('productDescription')
+            let priceInput = document.getElementById('productPrice')
+            let thumbnailInput= document.getElementById('productThumbnail')
+            let codeInput= document.getElementById('productCode')
+            let stockInput= document.getElementById('productStock')
+
+            const newProductTitle = titleInput.value.trim()
+            const newProductDescription = descriptionInput.value.trim()
+            const newProductPrice = priceInput.value.trim()
+            const newProductThumbnail= thumbnailInput.value.trim()
+            const newProductCode = codeInput.value.trim()
+            const newProductStock = stockInput.value.trim()
+
+            if (newProductTitle!== '' && newProductDescription !== '' && newProductPrice !== '' && newProductCode !== ''
+            && newProductStock !== '') {
+                
+            //Emitiendo newProduct
+            socket.emit('newProduct', {
+              id: undefined,
+              title: newProductTitle,
+              description: newProductDescription,
+              price: newProductPrice,
+              thumbnail: newProductThumbnail,
+              code: newProductCode,
+              stock: newProductStock,
+              });
+
+              titleInput.value = ''; descriptionInput.value = ''; priceInput.value = '';
+              thumbnailInput.value = ''; codeInput.value = ''; stockInput.value = '';
+;
+            }
+  };
+
+
+//Escuchando updateList
+let productList = JSON.parse(localStorage.getItem('productList')) || [];
+
+socket.on('updateList', (newProductList) => {
+  productList = newProductList;
+  updateBrowserList(productList);
+  localStorage.setItem('productList', JSON.stringify(productList));
+});
+
+function updateBrowserList(products) {
+  const productListElement = document.getElementById('productList');
+  productListElement.innerHTML = '';
+    products.forEach(product => {
+        const productItem = document.createElement('li');
+        productItem.textContent = `${product.title} | ID ${product.id||product._id}`;
+        productListElement.appendChild(productItem);
+    });
+}
+</script>
+
+
+
+{{!-- Formulario para eliminar producto desde el front --}}
+
+<form id="deleteForm">
+        <label for="title">Id del Producto:</label>
+        <input type="text" id="productId" name="title" required>
+        <button type="button" onclick="deleteProduct()">Eliminar producto</button>
+    </form>
+
+
+{{!-- Lo que hace el evento deleteProduct --}}
+
+<script>
+function deleteProduct() {
+            const idInput = document.getElementById('productId');
+            const productId = idInput.value.trim();
+
+            if (productId!== '') {
+                //Emitiendo deleteProduct
+                socket.emit('deleteProduct', { id: productId });
+
+                idInput.value = '';
+            }
+  }; 
+
+ 
+</script>
+
+
+
+</body>
+</html>
