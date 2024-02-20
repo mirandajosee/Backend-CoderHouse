@@ -14,6 +14,9 @@ import { productsModel } from "../dao/models/products.model.js"
 import { messagesModel } from "../dao/models/messages.model.js"
 import { cartsModel } from "../dao/models/carts.model.js"
 import session from "express-session"
+import passport from "passport"
+import { initializePassport } from "../config/passportConfig.js"
+import { default as MongoStore } from "connect-mongo"
 
 const productManager= new ProductManager()
 const PORT = 8080 || window.location.port
@@ -24,8 +27,15 @@ const handlebars = create({})
 app.use(express.urlencoded({extended:true}));
 app.use(express.json())
 app.use(cors())
-
 app.use(session({
+    store: MongoStore.create({
+        mongoUrl: 'mongodb+srv://mirandajosee:MongoDB123@clustercoder.z31q0pz.mongodb.net/ecommerce',
+        mongoOptions: {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        },
+        ttl: 15000000000 * 24
+    }), 
     secret: 'p@L@BR@s3CR3T@',
     resave: true,
     saveUninitialized: true
@@ -49,10 +59,18 @@ let productList=[]
 const io = new ServerIO(httpServer)
 let mensajes = []
 
+
 app.engine('handlebars', handlebars.engine)
 app.set('views',__dirname+'/views');
 app.set('view engine','handlebars');
 app.use(express.static(__dirname+'/public'))
+
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
+
 
 io.on('connection', socket=> {
     console.log('Nuevo cliente conectado');

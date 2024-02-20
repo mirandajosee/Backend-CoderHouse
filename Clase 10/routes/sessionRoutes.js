@@ -37,7 +37,7 @@ sessionRouter.post('/register', async (req, res)=>{
     }
     let result = await usersModel.create(user)
 
-    res.status(200).json({result})}
+    res.status(200).redirect("/login")}
     catch(err){
         console.log(err)
     }
