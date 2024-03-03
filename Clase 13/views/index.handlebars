@@ -45,11 +45,18 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     function addToCart(pid){
+        {{#if user}}
         const socket=io()
         socket.emit("addToCart",{
-            cid:"65ca19112dc0eaafade1935e",
+            cid:'{{user.cartID}}',
             pid:pid
         })
+        {{/if}}
+        {{#unless user}}
+        location.assign(location.origin+"/"+"register")
+        {{/unless}}
+        
+        
     }
 </script>
 <script>

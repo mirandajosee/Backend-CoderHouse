@@ -2,6 +2,7 @@ import passport from 'passport'
 import { Strategy as localStrategy } from 'passport-local'
 import { Strategy as gitHubStrategy} from 'passport-github2'
 import { usersModel } from '../dao/models/user.model.js'
+import { cartsModel } from '../dao/models/carts.model.js'
 import { createHash, isValidPassword } from '../utils.js'
 
 
@@ -11,16 +12,18 @@ export const initializePassport = () => {
         passReqToCallback: true, // accediendo al req
         usernameField: 'email'
     }, async (req, username, password, done) => {
-        const {firstName, lastName, email} = req.body
+        const {firstName, lastName, email,age} = req.body
         try {
             let  user = await usersModel.findOne({email})
             if (user) return done(null, false)       
-
-            let newUser = {
+            const cart= await cartsModel.create({products:[]})
+            const newUser = {
                 firstName, 
                 lastName,
                 email,
-                password: createHash(password)
+                password: createHash(password),
+                age,
+                cartID: cart._id
             } 
             let result = await usersModel.create(newUser)
             // done funciona como el next
@@ -55,11 +58,13 @@ export const initializePassport = () => {
         try {
                 let user = await usersModel.findOne({email: profile._json.email})
                 if (!user) {
+                    const cart= await cartsModel.create({products:[]})
                     let newUser = {
                         firstName: profile._json.name,
                         lastName: profile._json.name,
                         email: profile._json.email,
-                        password: ''
+                        password: '',
+                        cartID: cart._id
                     }
 
                     let result = await usersModel.create(newUser)

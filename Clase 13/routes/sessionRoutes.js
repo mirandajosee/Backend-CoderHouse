@@ -17,14 +17,14 @@ sessionRouter.post('/login',(req,res,next)=> auth(req,res,next),passport.authent
     //     role:user.role
     // }
     if (!req.user) return res.status(401).redirect("/login")
-    console.log(req.user)
     req.session.user = { 
         firstName: req.user.firstName, 
         lastName: req.user.lastName,
         name:`${req.user.firstName} ${req.user.lastName}`,
         role:req.user.role,
         email: req.user.email, 
-        id: req.user._id 
+        id: req.user._id ,
+        cartID:req.user.cartID
     }
     res.status(200).redirect("/products")
 })
@@ -37,7 +37,8 @@ async (req, res) =>
     lastName: req.user.lastName,
     email: req.user.email,
     role:req.user.role,
-    id: req.user._id 
+    id: req.user._id,
+    cartID:req.user.cartID
 }})
 
 sessionRouter.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/login'} ),async (req, res) => {
@@ -47,7 +48,8 @@ sessionRouter.get('/githubcallback', passport.authenticate('github', {failureRed
         lastName: req.user.lastName,
         email: req.user.email,
         role:req.user.role,
-        id: req.user._id 
+        id: req.user._id,
+        cartID:req.user.cartID
     }
     res.redirect('/products')
 })
