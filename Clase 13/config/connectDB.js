@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+import { config as dotenvConfig } from "dotenv"
+dotenvConfig({path:'./.env.production'})
 
 export const connectBD = async () => {
     try {
-        await mongoose.connect("mongodb+srv://mirandajosee:MongoDB123@clustercoder.z31q0pz.mongodb.net/ecommerce")
-        // await mongoose.connect('mongodb://127.0.0.1:27017/ecommerce')
+        await mongoose.connect(process.env.MONGO_URL)
         console.log('Base de datos conectada')        
     } catch (error) {
         console.log(error)

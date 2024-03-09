@@ -22,11 +22,11 @@
         {{/each}}
     </ul>
 {{#if hasNextPage}}
-            <a href="/?page={{nextPage}}&limit={{limit}}&sort={{sort}}">Página Siguiente</a>
+            <a href="/products?page={{nextPage}}&limit={{limit}}&sort={{sort}}">Página Siguiente</a>
 {{/if}}
 
 {{#if hasPrevPage}}
-            <a href="/?page={{prevPage}}&limit={{limit}}&sort={{sort}}">Página Anterior</a>
+            <a href="/products?page={{prevPage}}&limit={{limit}}&sort={{sort}}">Página Anterior</a>
 {{/if}}
 
 <form id="limitForm">

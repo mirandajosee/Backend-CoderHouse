@@ -17,6 +17,9 @@ import session from "express-session"
 import passport from "passport"
 import { initializePassport } from "../config/passportConfig.js"
 import { default as MongoStore } from "connect-mongo"
+import { config as dotenvConfig } from "dotenv"
+dotenvConfig({path:'./.env.production'})
+
 
 const productManager= new ProductManager()
 const PORT = 8080 || window.location.port
@@ -29,14 +32,14 @@ app.use(express.json())
 app.use(cors())
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://mirandajosee:MongoDB123@clustercoder.z31q0pz.mongodb.net/ecommerce',
+        mongoUrl: process.env.MONGO_URL,
         mongoOptions: {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         },
         ttl: 15000000000 * 24
     }), 
-    secret: 'p@L@BR@s3CR3T@',
+    secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
 }))
