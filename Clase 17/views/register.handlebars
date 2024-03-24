@@ -1,0 +1,20 @@
+<h1>Registro</h1>
+<div class="container">
+    <form action="/api/users/register" method="post" class="form-group w-50">
+        <label class="form-label">Nombre</label>
+        <input   class="form-control" name="firstName">
+        <label class="form-label">Apellido</label>
+        <input type="text" class="form-control" name="lastName">
+        <label class="form-label">Email</label>
+        <input type="text" class="form-control" name="email">
+        <label class="form-label">Edad</label>
+        <input type="text" class="form-control" name="age">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control" name="password">
+        <input type="submit">
+    </form>
+    <form action="/api/users/githubcallback" method="get" class="form-group w-50">
+    <input type="submit" value="Registrarse con GitHub">
+    </form>
+    <p>¿Ya tenes cuenta? <a href="/login">Ingresa aquí</a></p>
+</div>
