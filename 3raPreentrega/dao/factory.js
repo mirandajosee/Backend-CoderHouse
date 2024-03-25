@@ -29,8 +29,6 @@ switch (mode) {
         CartDao = async (import('./CartManager.js')).default
         UserDao = UserDaoMongo
         OrderDao = OrderDaoMongo
-        
-        
         break;
 
     default:
@@ -42,7 +40,7 @@ switch (mode) {
         break;
 }
 
-module.exports = {
+export {
     ProductDao,
     UserDao,
     CartDao,

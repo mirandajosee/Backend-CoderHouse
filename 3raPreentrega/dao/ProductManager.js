@@ -1,6 +1,6 @@
 //const fs = require("fs")
 //const { promises, existsSync} = require('fs')
-import fs, { stat } from "node:fs"
+import fs from "node:fs"
 import { promises, existsSync} from "node:fs"
 
 export class ProductManager {

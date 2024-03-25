@@ -1,8 +1,10 @@
 import { cartsModel } from "../models/carts.model"
+import { productsModel } from "../dao/models/products.model.js";
 
 export class CartDaoMongo{    
     constructor(){
         this.Cart = cartsModel
+        this.Products = productsModel
     }
 
     async get(){
@@ -31,27 +33,10 @@ export class CartDaoMongo{
         }
     }
 
-    async update(cid, product){        
+    async updateCart(cid,newCart){        
         try {
-            const updatedCart = await this.Cart.findOneAndUpdate(
-                { _id: cid, 'products.product': product._id },
-                { $inc: { 'products.$.quantity': product.quantity } },
-                { new: true }
-            )
-          
-            if (updatedCart) {
-                // El producto ya estaba en el carrito, se actualizó su cantidad
-                return updatedCart
-            }
-          
-            // El producto no estaba en el carrito, se agrega con quantity en 1
-            const newProductInCart = await this.Cart.findOneAndUpdate(
-                { _id: cid },
-                { $push: { products: { product: product._id, quantity: product.quantity } } },
-                { new: true, upsert: true }
-            )
-          
-            return newProductInCart
+            const updatedCart = await this.Cart.findOneAndUpdate({_id:cid},newCart,{new:true}).lean()
+            return updatedCart
         } catch (error) {
             return new Error('Error adding product to cart'+error)
         }
@@ -82,6 +67,38 @@ export class CartDaoMongo{
             )
         } catch (error) {
             return new Error('Error deleting cart'+ error)
+        }
+    }
+    async updateProductToCart(cid,pid,quantity){
+        try{
+        const cart = await cartsModel.findById({_id: cid}).lean()
+        const productoId = cart.products.findIndex(prod => prod.product._id==pid)
+        if (productoId!=-1){
+        let newCart= cart.products
+        newCart[productoId].quantity=quantity
+        cart.products=newCart
+        const result = await cartsModel.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
+        res.json(result)
+        } 
+        else {
+            res.send("Producto no encontrado")
+        }}catch(err)
+        {return new Error('Error deleting cart'+ error)}
+    }
+    
+    async addProductToCart(cartId,productId){
+        try{
+            const producto = await productsModel.findById({_id:productId}).lean()
+            if (producto){
+                const newProd = {product: productId, quantity:1}
+                const newCart = await cartsModel.findOneAndUpdate({_id:cartId},{$addToSet:{products:newProd}},{new:true}).lean()
+                res.send(newCart)}
+            else{
+                    res.status(400).send("Producto no encontrado")
+                }
+        }
+        catch(err){
+            console.log(err)
         }
     }
 

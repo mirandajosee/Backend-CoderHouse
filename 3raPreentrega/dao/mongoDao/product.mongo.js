@@ -7,32 +7,41 @@ export default class ProductDaosMongo {
         this.product = productsModel        
     }
 
-    async get({limit=10, page=1, sort="default"}){       
+    async getProducts({limit=10, pageQuery=1, sort="default"}){     
+        try{  
         const result =sort=="default"? 
             await this.product.paginate({}, {limit, page: pageQuery, lean: true}):
             await this.product.paginate({}, {limit, page: pageQuery, sort: {price: order[sort]}, lean: true})
         result.status="success"
         result.payload=result.docs
-        return await result                               
+        return await result}
+        catch(err) {console.log(err)}                          
+    }
+
+    async getProductById(pid){
+        try{
+        return await this.product.findById(pid).lean() }   
+        catch(err) {console.log(err)}
+    }
+
+
+    async addProduct(newProduct){       
+        try {
+        return await this.product.create(newProduct).lean()}
+        catch(err){console.log(err)}
         
     }
 
-    async getById(pid){        
-        return await this.product.findById(pid).lean()        
+    async updateProduct(pid, updateProduct){
+        try    {
+        return await this.product.findByIdAndUpdate({_id: pid}, updateProduct, {new: true}).lean()}
+        catch(err){console.log(err)}
     }
 
-
-    async create(newProduct){        
-        return await this.product.create(newProduct).lean()
-        
-    }
-
-    async update(pid, updateProduct){        
-        return await this.product.findByIdAndUpdate({_id: pid}, updateProduct, {new: true}).lean()
-    }
-
-    async remove(pid){       
-        return await this.product.findByIdAndUpdate({ _id: pid }, { isActive: false }, {new: true}).lean()      
+    async deleteProduct(pid){       
+        try{
+        return await this.product.findByIdAndUpdate({ _id: pid }, { isActive: false }, {new: true}).lean()  }
+        catch(err){console.log(err)}    
     }
 
 }
