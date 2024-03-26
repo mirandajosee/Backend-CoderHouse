@@ -23,6 +23,8 @@ export default class CartManager {
     }
 
     addProductToCart = (cartId, productId) => {
+        cartId=parseInt(cartId)
+        productId=parseInt(productId)
         const cart = this.getCartById(cartId)
         if (cart) {
             const existingProduct = cart.products.find(product => product.product === productId);
@@ -38,6 +40,7 @@ export default class CartManager {
     }
 
     getCartById = (id) => {
+        id=parseInt(id)
         const cart = this.carts.find(cart => cart.id == id)
         if (cart){return cart}
         else{

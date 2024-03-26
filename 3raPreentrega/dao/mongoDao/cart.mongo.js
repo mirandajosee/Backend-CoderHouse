@@ -46,11 +46,17 @@ export class CartDaoMongo{
     // Delete api/carts/:cid/products/:pid
     async deleteItem(cid, pid){
         try {
-            return await this.Cart.findOneAndUpdate(
-                { _id: cid },
-                { $pull: { products: { product: pid } } },
-                { new: true }
-            )
+            const cart = await this.Cart.findById({_id: cid}).lean()
+            const productoId = cart.products.findIndex(prod => prod.product._id==pid)
+                if (productoId!=-1){
+                    cart.products.splice(productoId,1)
+                    const newCart = await this.Cart.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
+                    console.log("Elemento borrado exitosamente")
+                    return newCart
+                } else {
+                    res.send("Product Id not found")
+                    return console.log("Product Id not found")
+                }
         } catch (error) {
             return new Error('Error deleting product from cart'+error)
         }
@@ -59,7 +65,7 @@ export class CartDaoMongo{
     // vaciar carrito
     async delete(cid){
         try {
-            // console.log(cid)
+            //const cart = await cartsModel.findById({_id: cid}).lean() chequear si existe
             return await this.Cart.findOneAndUpdate(
                 { _id: cid },
                 { $set: { products: [] } },
@@ -71,18 +77,18 @@ export class CartDaoMongo{
     }
     async updateProductToCart(cid,pid,quantity){
         try{
-        const cart = await cartsModel.findById({_id: cid}).lean()
+        const cart = await this.Cart.findById({_id: cid}).lean()
         const productoId = cart.products.findIndex(prod => prod.product._id==pid)
         if (productoId!=-1){
         let newCart= cart.products
         newCart[productoId].quantity=quantity
         cart.products=newCart
-        const result = await cartsModel.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
+        const result = await this.Cart.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
         res.json(result)
         } 
         else {
             res.send("Producto no encontrado")
-        }}catch(err)
+        }}catch(error)
         {return new Error('Error deleting cart'+ error)}
     }
     
@@ -91,7 +97,7 @@ export class CartDaoMongo{
             const producto = await productsModel.findById({_id:productId}).lean()
             if (producto){
                 const newProd = {product: productId, quantity:1}
-                const newCart = await cartsModel.findOneAndUpdate({_id:cartId},{$addToSet:{products:newProd}},{new:true}).lean()
+                const newCart = await this.Cart.findOneAndUpdate({_id:cartId},{$addToSet:{products:newProd}},{new:true}).lean()
                 res.send(newCart)}
             else{
                     res.status(400).send("Producto no encontrado")
