@@ -2,13 +2,14 @@ import { productsModel } from "../models/products.model"
 
 
 
-export default class ProductDaosMongo {
+export default class ProductDaoMongo {
     constructor(){
         this.product = productsModel        
     }
 
     async getProducts({limit=10, pageQuery=1, sort="default"}){     
         try{  
+        const order={"asc":1,"desc":-1}
         const result =sort=="default"? 
             await this.product.paginate({}, {limit, page: pageQuery, lean: true}):
             await this.product.paginate({}, {limit, page: pageQuery, sort: {price: order[sort]}, lean: true})

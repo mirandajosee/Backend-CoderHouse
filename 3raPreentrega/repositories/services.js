@@ -1,19 +1,17 @@
 import { ProductDao,UserDao,CartDao,OrderDao } from '../dao/factory.js'
 
-const ProductRepositories = require('../repositories/product.repositories.js') // Service
-const UserRpositories = require('../repositories/user.repositories.js')
-const OrderRepositories = require('../repositories/orders.repository.js')
-const CartRepositories = require('../repositories/cart.repositories.js')
+const ProductRepositories = async (import('../repositories/product.repositories.js')).default
+const TicketRepositories = async (import('../repositories/tickets.repositories.js')).default
+const CartRepositories = async (import('../repositories/cart.repositories.js')).default
 
-
-const userService = new UserRpositories(new UserDao())
 const productService = new ProductRepositories(new ProductDao())
 const cartService = new CartRepositories(new CartDao())
-const orderService = new OrderRepositories(new OrderDao())
+const ticketService = new TicketRepositories(new OrderDao())
+const userService=new UserDao()
 
-module.exports = {
+export {
     userService,
     productService,
     cartService,
-    orderService
+    ticketService
 }

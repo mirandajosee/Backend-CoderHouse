@@ -1,5 +1,5 @@
-import { CartManager } from "../dao/CartManager.js";
-import { persistencia } from "../utils.js";
+import CartManager from "../dao/CartManager.js"
+import { persistencia } from "../utils.js"
 import { cartsModel } from "../dao/models/carts.model.js"
 import { productsModel } from "../dao/models/products.model.js";
 

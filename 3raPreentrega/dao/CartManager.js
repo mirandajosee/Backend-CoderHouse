@@ -1,10 +1,10 @@
 import fs from "node:fs"
 
-export class CartManager {
+export default class CartManager {
     constructor() {
         this.path = "./carts.json"
         this.carts = []
-        this.loadCartsFromFile()
+        this.get()
     }
 
     createCart = () => {
@@ -32,7 +32,8 @@ export class CartManager {
                 cart.products.push({ product: productId, quantity: 1 })
             }
 
-            this.saveCartsToFile();
+            this.saveCartsToFile()
+            return cart
         }
     }
 
@@ -48,7 +49,7 @@ export class CartManager {
         fs.writeFileSync(this.path, JSON.stringify(this.carts, null, 2), 'utf-8')
     }
 
-    loadCartsFromFile() {
+    get() {
         try {
             const data = fs.readFileSync(this.path, 'utf-8')
             console.log(data)

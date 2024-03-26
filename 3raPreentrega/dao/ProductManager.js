@@ -3,9 +3,9 @@
 import fs from "node:fs"
 import { promises, existsSync} from "node:fs"
 
-export class ProductManager {
+export default class ProductManager {
     constructor(){
-        this.path="./products.json"
+        this.path="../products.json"
         this.readFileOrCreateNewOne()
     }
 
@@ -13,9 +13,9 @@ export class ProductManager {
         existsSync(this.path)? fs.readFileSync(this.path) : fs.writeFileSync(this.path, "[]")
     }
 
-    getProducts = () => {
-            const dataJson = fs.readFileSync(this.path, "utf-8")
-            return JSON.parse(dataJson)
+    getProducts = (Config) => {
+            const dataJson = Config.limit? JSON.parse(fs.readFileSync(this.path, "utf-8")).slice(0,limit) : JSON.parse(fs.readFileSync(this.path, "utf-8"))
+            return dataJson
         } 
 
     
@@ -41,6 +41,7 @@ export class ProductManager {
             product.id=lastId
             productos.push(product)
             fs.writeFileSync(this.path,JSON.stringify(productos,null,2),"utf-8")
+            return product
             }
         }else {
         console.log("Se ingresó un producto incorrecto, verifique los campos obligatorios")}
@@ -48,6 +49,7 @@ export class ProductManager {
 
 
     getProductById = (id) => {
+        id=Number(id)
         const data= this.getProducts()
         const productById = data.find((prod)=>prod.id==id)
         if(productById){
@@ -58,6 +60,7 @@ export class ProductManager {
     }
 
     updateProduct = (id,update) => {
+            id=parseInt(id)
             const data= this.getProducts()
             let  producto = data.find((prod)=>prod.id==id)
             if (producto){
@@ -84,6 +87,7 @@ export class ProductManager {
 
     deleteProduct = (id) => {
         try{
+            id=parseInt(id)
             const data = this.getProducts()
             const productoId = data.findIndex(prod => prod.id==id)
             if (productoId!=-1){

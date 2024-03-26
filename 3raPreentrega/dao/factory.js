@@ -10,7 +10,7 @@ switch (mode) {
     case 'MONGO':
 
         dbConnection() // 2 llamada a la conexión
-        const ProductDaoMongo = async (import('./mongoDao/product.mongo.js')).default
+        const ProductDaoMongo = async (import('./mongoDao/product.mongo.js').default)
         ProductDao = ProductDaoMongo
 
         const UserDaoMongo = async (import('./mongoDao/session.mongo.js')).default
@@ -19,7 +19,7 @@ switch (mode) {
         const OrderDaoMongo = async (import('./mongoDao/ticket.mongo.js')).default
         OrderDao = OrderDaoMongo
 
-        const CartDaoMongo = async (import('./mongoDao/cart.mongo.js')).default
+        const CartDaoMongo = async (import('./mongoDao/cart.mongo.js').default)
         CartDao = CartDaoMongo
         
         break

@@ -1,4 +1,4 @@
-class ProductRepositories { // UserServices
+export default class ProductRepositories { // UserServices
     constructor(dao){
         this.dao = dao
     }
