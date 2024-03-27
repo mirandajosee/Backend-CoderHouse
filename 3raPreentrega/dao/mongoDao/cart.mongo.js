@@ -1,7 +1,7 @@
-import { cartsModel } from "../models/carts.model"
-import { productsModel } from "../dao/models/products.model.js";
+import { cartsModel } from "../models/carts.model.js"
+import { productsModel } from "../models/products.model.js";
 
-export class CartDaoMongo{    
+export default class CartDaoMongo{    
     constructor(){
         this.Cart = cartsModel
         this.Products = productsModel

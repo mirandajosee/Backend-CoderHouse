@@ -1,5 +1,5 @@
 import express from "express"
-import { ProductManager } from "../dao/ProductManager.js";
+import {default as ProductManager } from "../dao/ProductManager.js";
 import { productsModel } from "../dao/models/products.model.js";
 import { messagesModel } from "../dao/models/messages.model.js";
 import { cartsModel } from "../dao/models/carts.model.js";

@@ -1,4 +1,4 @@
-import { UserDTO } from "../dto/user.dto"
+import { UserDTO } from "../dto/user.dto.js"
 
 export class SessionController{
     constructor(){}
