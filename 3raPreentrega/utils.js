@@ -20,5 +20,5 @@ export default __dirname
 commander
     .option('--mode <mode>', 'Modo de ejecución (MONGO o FILES)',"MONGO")
     .parse()
-
+console.log(commander.opts())
 export const {mode}=commander.opts()

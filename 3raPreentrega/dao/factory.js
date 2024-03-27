@@ -27,8 +27,8 @@ switch (mode) {
         dbConnection()
         ProductDao = (await import('./ProductManager.js')).default
         CartDao = (await import('./CartManager.js')).default
-        UserDao = UserDaoMongo
-        OrderDao = OrderDaoMongo
+        //UserDao = UserDaoMongo
+        //OrderDao = OrderDaoMongo
         break;
 
     default:
