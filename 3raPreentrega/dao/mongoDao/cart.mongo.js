@@ -1,5 +1,6 @@
 import { cartsModel } from "../models/carts.model.js"
 import { productsModel } from "../models/products.model.js";
+import { usersModel } from "../models/user.model.js";
 import { ticketsModel } from "../models/tickets.model.js";
 
 export default class CartDaoMongo{    
@@ -111,11 +112,32 @@ export default class CartDaoMongo{
         }
     }
 
-    async purchaseCart(email,cid){
+    async purchaseCart(cid){
         try {
-            const amount= this.Cart.find({_id:cid}).aggregate([{$sum:{$multiply:["$price", "$quantity"]}}])
-            //return await ticketsModel.create({amount:amount,purchaser:email})
-            return amount
+            const email= (await usersModel.findOne({cartID:cid}).lean()).email
+            const products= (await this.Cart.findOne({_id:cid}).lean()).products
+            let amount=0
+            let newCart=[]
+            products.forEach(async (prod)=> 
+            {
+                if(prod.product.stock>=prod.quantity){
+                    amount+=prod.product.price * prod.quantity
+                    await productsModel.findOneAndUpdate(
+                        { _id: prod.product._id },
+                        { $set: { stock: prod.product.stock-prod.quantity } },
+                        { new: true }
+                    )
+                }
+                else{
+                    newCart.push(prod)
+                }
+            })
+            await this.Cart.findOneAndUpdate(
+                { _id: cid },
+                { $set: { products: newCart } },
+                { new: true }
+            )
+            return await ticketsModel.create({purchaser:email,amount:amount})
             
         } catch (error) {
             return  new Error(error)

@@ -23,9 +23,9 @@ export default class ProductRepositories { // UserServices
         }
     }
 
-    async purchaseCart(email,cid){
+    async purchaseCart(cid){
         try {
-            return await this.dao.purchaseCart(email)}
+            return await this.dao.purchaseCart(cid)}
         catch (err) {
            return new Error('Error creating cart'+err);
         }

@@ -88,7 +88,8 @@ export class CartController{
     purchaseCart=async(req, res) =>{
         try{
             const {cid} = req.params
-            const cart = await cartService.purchaseCart(req.session.user.email,cid)
+            const ticket = await cartService.purchaseCart(cid)
+            res.send(ticket)
         }
         catch(err){
             console.log(err)
