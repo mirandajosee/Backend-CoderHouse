@@ -6,13 +6,10 @@ import { viewsRouter } from "../routes/viewsRoutes.js"
 import { Server as ServerIO } from "socket.io"
 import  __dirname from "../utils.js"
 import { create } from "express-handlebars"
-import { default as ProductManager } from "../dao/ProductManager.js"
-import { persistencia , mode} from "../utils.js"
 import { connectBD } from "../config/connectDB.js"
 import cors from "cors"
-import { productsModel } from "../dao/models/products.model.js"
+import { productService, cartService } from "../repositories/services.js"
 import { messagesModel } from "../dao/models/messages.model.js"
-import { cartsModel } from "../dao/models/carts.model.js"
 import session from "express-session"
 import passport from "passport"
 import { initializePassport } from "../config/passportConfig.js"
@@ -21,7 +18,6 @@ import { config as dotenvConfig } from "dotenv"
 dotenvConfig({path:'./.env.production'})
 
 
-const productManager= new ProductManager()
 const PORT = 8080 || window.location.port
 connectBD()
 const app = express()
@@ -80,28 +76,17 @@ io.on('connection', socket=> {
     // Escuchando newProduct
     socket.on('newProduct', async(data) => {
         try
-        {if (persistencia=="FS"){
-        let newProductId = productManager.addProduct(data)
-        let newProduct = { ...data, id: newProductId }
-        productList.push(newProduct)}
-
-        if (persistencia=="DB"){
-        await productsModel.create(data)
-        let id= await productsModel.findOne({title:data.title}).lean()._id
-        productList.push({...data,id:id})
-        }}catch(err){
+        {
+        productList.push(await productService.addProduct(data))
+        }catch(err){
             console.log(err)
         }
         
         // Emitiendo updateList
         io.emit('updateList', async()=>{
             try{
-            if (persistencia=="FS"){
-            productManager.getProducts()}
-
-            if (persistencia=="DB"){
-            await productsModel.find({}).lean()
-            }}catch(err){
+                await productService.getProducts()
+            }catch(err){
                 console.log(err)
             }
         })
@@ -111,24 +96,13 @@ io.on('connection', socket=> {
     // Escuchando deleteProducts
     socket.on('deleteProduct', async (productId) => {
         try{
-            if (persistencia=="FS"){
-            const productList = productManager.getProducts();
-            const filteredList = productList.filter(product => product.id != productId.id)
-            productManager.deleteProduct(productId.id)
-            // Emitiendo updateList
+            const filteredList=await productService.deleteProduct(productId)
             io.emit('updateList', filteredList)}
-
-            if (persistencia=="DB"){
-                const filteredList= await productsModel.find({_id:{$nin:productId.id}}).lean()
-                await productsModel.findByIdAndDelete({_id:productId.id})
-                io.emit('updateList', filteredList)}
-            }
-        
         catch(err)
         {console.log(err)}
     });
 
-    socket.on('message', async(data) => {
+    socket.on('message' ,async(data) => {
         try{
         //mensajes.push(data)
         await messagesModel.create(data)
@@ -143,10 +117,10 @@ io.on('connection', socket=> {
         try{
             const productId=data.pid
             const cartId=data.cid
-            const producto = await productsModel.findById({_id:productId}).lean()
+            const producto = await productService.getProductById(productId)
             if (producto){
-            const newProd = {product: productId, quantity:1}
-            const newCart = await cartsModel.findOneAndUpdate({_id:cartId},{$addToSet:{products:newProd}},{new:true}).lean()}
+            cartService.addProductToCart(cartId,productId)
+        }
             else{
                 res.status(400).send("Producto no encontrado")
             }

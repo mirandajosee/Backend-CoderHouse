@@ -7,18 +7,23 @@ export default class ProductDaoMongo {
         this.product = productsModel        
     }
 
-    async getProducts({limit=10, pageQuery=1, sort="default"}){     
+    async getPageProducts({limit=10, pageQuery=1, sort="default"}){     
         try{  
         const order={"asc":1,"desc":-1}
         const result =sort=="default"? 
-            await this.product.paginate({}, {limit, page: pageQuery, lean: true}):
-            await this.product.paginate({}, {limit, page: pageQuery, sort: {price: order[sort]}, lean: true})
+            await this.product.paginate({status:true}, {limit, page: pageQuery, lean: true}):
+            await this.product.paginate({status:true}, {limit, page: pageQuery, sort: {price: order[sort]}, lean: true})
         result.status="success"
         result.payload=result.docs
         return await result}
         catch(err) {console.log(err)}                          
     }
-
+    async getProducts(config){       
+        try {
+        return await this.product.find({status:true}).lean()}
+        catch(err){console.log(err)}
+        
+    }
     async getProductById(pid){
         try{
         return await this.product.findById(pid).lean() }   
@@ -41,7 +46,7 @@ export default class ProductDaoMongo {
 
     async deleteProduct(pid){       
         try{
-        return await this.product.findByIdAndUpdate({ _id: pid }, { isActive: false }, {new: true}).lean()  }
+        return await this.product.findByIdAndUpdate({ _id: pid,status:true }, { status: false }, {new: true}).lean()  }
         catch(err){console.log(err)}    
     }
 

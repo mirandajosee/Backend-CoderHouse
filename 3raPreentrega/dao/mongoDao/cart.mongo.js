@@ -1,5 +1,6 @@
 import { cartsModel } from "../models/carts.model.js"
 import { productsModel } from "../models/products.model.js";
+import { ticketsModel } from "../models/tickets.model.js";
 
 export default class CartDaoMongo{    
     constructor(){
@@ -9,7 +10,7 @@ export default class CartDaoMongo{
 
     async get(){
         try {
-            return await this.Cart.find()
+            return await this.Cart.find({})
             
         } catch (error) {
             return  new Error(error)
@@ -98,13 +99,26 @@ export default class CartDaoMongo{
             if (producto){
                 const newProd = {product: productId, quantity:1}
                 const newCart = await this.Cart.findOneAndUpdate({_id:cartId},{$addToSet:{products:newProd}},{new:true}).lean()
-                res.send(newCart)}
+                //res.send(newCart)
+                return newCart
+            }
             else{
                     res.status(400).send("Producto no encontrado")
                 }
         }
         catch(err){
             console.log(err)
+        }
+    }
+
+    async purchaseCart(email,cid){
+        try {
+            const amount= this.Cart.find({_id:cid}).aggregate([{$sum:{$multiply:["$price", "$quantity"]}}])
+            //return await ticketsModel.create({amount:amount,purchaser:email})
+            return amount
+            
+        } catch (error) {
+            return  new Error(error)
         }
     }
 

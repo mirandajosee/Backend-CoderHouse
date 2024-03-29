@@ -1,12 +1,8 @@
 import express from "express"
-import {default as ProductManager } from "../dao/ProductManager.js";
-import { productsModel } from "../dao/models/products.model.js";
 import { messagesModel } from "../dao/models/messages.model.js";
-import { cartsModel } from "../dao/models/carts.model.js";
-import { persistencia } from "../utils.js";
+import { productService,cartService } from "../repositories/services.js";
 
 const viewsRouter = express.Router();
-const productManager = new ProductManager();
 
 
 viewsRouter.get('/',async (req,res)=>{
@@ -22,15 +18,10 @@ viewsRouter.get('/home', (req, res) => {
 //Vista de real time products
 viewsRouter.get('/realtimeproducts', async(req, res) => {
     try{
-        if (persistencia=="FS"){
-        const products = productManager.getProducts()
-        res.render('realtimeproducts', { products })}
-    
-        if(persistencia=="DB"){
-            const products= await productsModel.find({}).lean()
-            res.render('realtimeproducts', { products })
-        }}
-        catch(err){
+        const products = await productService.getProducts({})
+        res.render('realtimeproducts', { products })
+        }
+    catch(err){
             console.log(err)
         }
     })
@@ -38,7 +29,8 @@ viewsRouter.get('/realtimeproducts', async(req, res) => {
 viewsRouter.get('/chat', async(req, res) => {
     try{
     const chat=await messagesModel.find({}).lean()
-    res.render('chat', { chat})}
+    const role=req.session.user.role
+    res.render('chat', { chat,role})}
     catch(err){
         console.log(err)
     }
@@ -47,7 +39,6 @@ viewsRouter.get('/chat', async(req, res) => {
 viewsRouter.get('/products',async (req,res)=>{
     const {limit=10,page=1,sort="default"}=req.query
     const user=req.session.user
-    const order={"asc":1,"desc":-1}
     try{
         const {
             docs,
@@ -56,18 +47,10 @@ viewsRouter.get('/products',async (req,res)=>{
             prevPage, 
             nextPage,
             pageAct
-        } =sort=="default"? 
-        await productsModel.paginate({}, {limit, page: page, lean: true}):
-        await productsModel.paginate({}, {limit, page: page, sort: {price: order[sort]}, lean: true})
-        
-
-    if (persistencia=="FS"){
-    const products = productManager.getProducts()
-    res.render('index', { products })}
-
-    if(persistencia=="DB"){
-        const products= await productsModel.find({}).lean()
-        res.render('index', { products,limit,sort,page,
+        } = await productService.getPageProducts({limit:limit,pageQuery:page,sort:sort})
+        const products = await productService.getProducts({limit:limit})
+        //const products= productService.getProducts({})
+        res.render('index', {products,limit,sort,page,
             docs,
             hasPrevPage, 
             hasNextPage,
@@ -75,7 +58,7 @@ viewsRouter.get('/products',async (req,res)=>{
             nextPage,
             pageAct,
             user})
-    }}
+    }
     catch(err){
         console.log(err)
     }
@@ -86,7 +69,7 @@ viewsRouter.get('/carts/:cid', async(req, res) => {
     const cid=req.params.cid
     //const cid="65ca19112dc0eaafade1935e" //Puede servir para testear ya que se usa en views
     // también "65ca2a74be97e0dca5dc3ac8"
-    const cart=await cartsModel.findById({_id:cid}).lean()
+    const cart=cartService.getCartById(cid)
     res.render('cart', { cart})}
     catch(err){
         console.log(err)

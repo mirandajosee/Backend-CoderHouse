@@ -5,10 +5,10 @@ import { cartService } from "../repositories/services.js"
 export class CartController{
     constructor(){}
 
-    getCart= async(req, res) => {
+    getCartById= async(req, res) => {
         try{
         let cartId = req.params.cid
-        const cart = cartService.getCart(cartId)
+        const cart = await cartService.getCartById(cartId)
         cart? res.json(cart.products) : res.status(404).json({ error: 'Carrito no encontrado' })
         
         }catch(err){
@@ -88,7 +88,7 @@ export class CartController{
     purchaseCart=async(req, res) =>{
         try{
             const {cid} = req.params
-            const cart = await cartsModel.findById({_id: cid}).lean()
+            const cart = await cartService.purchaseCart(req.session.user.email,cid)
         }
         catch(err){
             console.log(err)

@@ -16,10 +16,19 @@
 
     <h1>Products list</h1>
     <ul>
-        {{#each docs}}
-            <p>Nombre: {{this.title}} | Precio: {{this.price}}</p>
-            <button onclick="addToCart(`{{this._id}}`)">Agregar al carrito</button>
-        {{/each}}
+        {{#if docs}}
+            {{#each docs}}
+                <p>Nombre: {{this.title}} | Precio: {{this.price}}</p>
+                <button onclick="addToCart(`{{this._id}}`)">Agregar al carrito</button>
+            {{/each}}
+
+            {{else}}
+            {{#each products}}
+                <p>Nombre: {{this.title}} | Precio: {{this.price}}</p>
+                <button onclick="addToCart(`{{this._id}}`)">Agregar al carrito</button>
+            {{/each}}
+        {{/if}}
+
     </ul>
 {{#if hasNextPage}}
             <a href="/products?page={{nextPage}}&limit={{limit}}&sort={{sort}}">Página Siguiente</a>
@@ -32,12 +41,14 @@
 <form id="limitForm">
         <label for="title">Productos por página:</label>
         <input type="number" id="limit" name="limit" min="1" required>
+        {{#if docs}}
         <select name="sort" id="sort" onchange="updateSort()">
             <option value={{sort}} type="string">Seleccione el orden</option>
             <option value="asc" type="string">Ascendente por precio</option>
             <option value="desc" type="string">Descendente por precio</option>
             <option value="default" type="string">Por defecto</option>
         </select>
+        {{/if}}
 </form>
 
 </center>

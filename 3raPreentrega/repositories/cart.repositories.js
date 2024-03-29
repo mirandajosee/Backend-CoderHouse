@@ -23,6 +23,14 @@ export default class ProductRepositories { // UserServices
         }
     }
 
+    async purchaseCart(email,cid){
+        try {
+            return await this.dao.purchaseCart(email)}
+        catch (err) {
+           return new Error('Error creating cart'+err);
+        }
+    }
+
     async updateCart(cid,newCart){        
         try {
             return await this.dao.updateCart(cid,newCart)

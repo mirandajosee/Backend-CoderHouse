@@ -3,7 +3,7 @@ export default class ProductRepositories { // UserServices
         this.dao = dao
     }
 
-    async getProducts(objConfig){     
+    async getPageProducts(objConfig){     
         try{  
             objConfig.limit = objConfig.limit &&  parseInt(objConfig.limit)
             objConfig.page  = objConfig.page  && parseInt(objConfig.page)
@@ -17,7 +17,11 @@ export default class ProductRepositories { // UserServices
         return await   this.dao.getProductById(pid)}
         catch(err) {console.log(err)}
     }
-
+    async getProducts(config){
+        try{
+        return await   this.dao.getProducts(config)}
+        catch(err) {console.log(err)}
+    }
 
     async addProduct(newProduct){       
         try {

@@ -5,7 +5,7 @@ import { promises, existsSync} from "node:fs"
 
 export default class ProductManager {
     constructor(){
-        this.path="../products.json"
+        this.path="./products.json"
         this.readFileOrCreateNewOne()
     }
 
@@ -14,7 +14,7 @@ export default class ProductManager {
     }
 
     getProducts = (Config) => {
-            const dataJson = Config.limit? JSON.parse(fs.readFileSync(this.path, "utf-8")).slice(0,limit) : JSON.parse(fs.readFileSync(this.path, "utf-8"))
+            const dataJson = Config.limit? JSON.parse(fs.readFileSync(this.path, "utf-8")).slice(0,Config.limit) : JSON.parse(fs.readFileSync(this.path, "utf-8"))
             return dataJson
         } 
 
@@ -93,7 +93,8 @@ export default class ProductManager {
             if (productoId!=-1){
                 data.splice(productoId,1)
                 fs.writeFileSync(this.path,JSON.stringify(data,null,2),"utf-8")
-                return console.log("Elemento borrado exitosamente")
+                console.log("Elemento borrado exitosamente")
+                return this.getProducts()
             } else {
                 return console.log("Id not found")
             }
