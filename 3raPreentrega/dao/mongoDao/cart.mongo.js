@@ -139,7 +139,7 @@ export default class CartDaoMongo{
             )
 
             await ticketsModel.create({purchaser:email,amount:amount})
-            const ticket = await ticketsModel.findOne({purchaser:email,amount:amount}).lean()
+            const ticket = await ticketsModel.findOne({purchaser:email,amount:amount},{},{sort:{'purchase_datetime':-1}}).lean()
             return ticket
             
         } catch (error) {
