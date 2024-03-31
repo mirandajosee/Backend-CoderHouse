@@ -9,6 +9,11 @@
 <body>
     {{#if user}}
     <p>Bienvenido {{user.name}}, tu rol es {{user.role}}</p>
+
+    <form action="/carts/{{user.cartID}}" method="get">
+        <input type="submit" value="Ir al carrito">
+    </form>
+
     <form action="/api/users/logout" method="post">
         <input type="submit" value="Cerrar sesión">
     </form>

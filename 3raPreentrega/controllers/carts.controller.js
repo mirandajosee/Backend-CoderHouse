@@ -1,6 +1,5 @@
-import { cartsModel } from "../dao/models/carts.model.js"
 import { cartService } from "../repositories/services.js"
-
+import { sendMail } from "../utils.js"
 
 export class CartController{
     constructor(){}
@@ -89,6 +88,12 @@ export class CartController{
         try{
             const {cid} = req.params
             const ticket = await cartService.purchaseCart(cid)
+            const subject = `Gracias por tu compra`
+            const html = `<div><h1>Tu compra fue exitosa</h1><br>
+            <h3>Monto: $${ticket.amount}</h3><br>
+            <h3>Código: ${ticket.code}</h3>`
+            const to=ticket.purchaser
+            await sendMail(to, subject, html)
             res.send(ticket)
         }
         catch(err){

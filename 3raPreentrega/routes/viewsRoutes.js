@@ -69,7 +69,7 @@ viewsRouter.get('/carts/:cid', async(req, res) => {
     const cid=req.params.cid
     //const cid="65ca19112dc0eaafade1935e" //Puede servir para testear ya que se usa en views
     // también "65ca2a74be97e0dca5dc3ac8"
-    const cart=cartService.getCartById(cid)
+    const cart=await cartService.getCartById(cid)
     res.render('cart', { cart})}
     catch(err){
         console.log(err)

@@ -137,7 +137,10 @@ export default class CartDaoMongo{
                 { $set: { products: newCart } },
                 { new: true }
             )
-            return await ticketsModel.create({purchaser:email,amount:amount})
+
+            await ticketsModel.create({purchaser:email,amount:amount})
+            const ticket = await ticketsModel.findOne({purchaser:email,amount:amount}).lean()
+            return ticket
             
         } catch (error) {
             return  new Error(error)

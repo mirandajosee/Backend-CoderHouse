@@ -6,11 +6,21 @@
     <title>Tu carrito</title>
 </head>
 <body>
+    <form action="/products" method="get" class="form-group w-50">
+        <input type="submit" value="Home">
+    </form>
+    {{#if cart}}
     <h1>Productos de tu carrito</h1>
     <ul>
         {{#each cart.products}}
             <li>Nombre: {{this.product.title}} | Precio: {{this.product.price}}| Cantidad: {{this.quantity}}</li>
         {{/each}}
     </ul>
+    <form action="/api/carts/{{cart._id}}/purchase" method="post" class="form-group w-50">
+        <input type="submit" value="Comprar carrito">
+    </form>
+    {{else}}
+    <h1>Tu carrito esta vacío</h1>
+    {{/if}}
 </body>
 </html>
