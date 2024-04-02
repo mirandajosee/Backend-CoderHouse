@@ -1,43 +1,19 @@
-
+import { UserDTO } from "../dto/user.dto.js"
 
 export class SessionController{
     constructor(){}
 
     emailLogin=async (req, res)=>{
-        if (!req.user) return res.status(401).redirect("/login")
-        req.session.user = { 
-            firstName: req.user.firstName, 
-            lastName: req.user.lastName,
-            name:`${req.user.firstName} ${req.user.lastName}`,
-            role:req.user.role,
-            email: req.user.email, 
-            id: req.user._id ,
-            cartID:req.user.cartID
-        }
+        if (!req.user) {return res.status(401).redirect("/login")}
+        req.session.user = new UserDTO(req.user)
         res.status(200).redirect("/products")
     }
 
     githubLogin=async (req, res) => 
-    {req.session.user = { 
-        name:req.user.firstName,
-        firstName: req.user.firstName, 
-        lastName: req.user.lastName,
-        email: req.user.email,
-        role:req.user.role,
-        id: req.user._id,
-        cartID:req.user.cartID
-    }}
+    {req.session.user = new UserDTO(req.user)}
 
     githubRegister=async (req, res) => {
-        req.session.user = { 
-            name:req.user.firstName,
-            firstName: req.user.firstName, 
-            lastName: req.user.lastName,
-            email: req.user.email,
-            role:req.user.role,
-            id: req.user._id,
-            cartID:req.user.cartID
-        }
+        req.session.user = new UserDTO(req.user)
         res.redirect('/products')
     }
     emailRegister=async (req, res)=>{ 

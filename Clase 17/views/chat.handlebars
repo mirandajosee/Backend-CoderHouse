@@ -27,7 +27,7 @@
         allowOutsideClick: false
     }).then( result =>  {
         email=result.value
-        socket.emit('message', { email, message: `${email} acaba de iniciar sesión` })
+        //socket.emit('message', { email, message: `${email} acaba de iniciar sesión` })
     })
 
     socket.on('messageLogs', data => {
@@ -43,7 +43,7 @@
     // const chatbox = document.getElementById('chatbox')
     const chatbox = document.querySelector('#chatbox')
     chatbox.addEventListener('keyup', (evt)=>{
-        if(evt.key === 'Enter'){
+        if(evt.key === 'Enter' && role==="user"){
             if(chatbox.value.trim().length > 0){
                 socket.emit('message', { email, message: chatbox.value })
                 chatbox.value = ''

@@ -12,3 +12,10 @@ export function auth(req, res, next) {
     }
     return next()
 }
+
+export function allow(req,res,next,allowed){
+    if(allowed.includes(req.session.user.role,0))
+        {return next()}
+    else {
+    return res.status(401).send('error de autorización')}
+}

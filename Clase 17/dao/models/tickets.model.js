@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
-import { createHash } from "../../utils";
+import { createHash } from "../../utils.js";
 
 const ticketsCollection="tickets"
 const ticketsSchema = new mongoose.Schema({
-    timestamps: { purchase_datetime: 'created_at', updated_datetime: 'updated_at' },
     amount: Number,
     purchaser:{
         type:String,
@@ -15,6 +14,6 @@ const ticketsSchema = new mongoose.Schema({
           return createHash(this.purchase_datetime+this._id)
         }
     }
-})
+},{timestamps: { createdAt: 'purchase_datetime', updatedAt: 'updated_datetime' }})
 
 export const ticketsModel = mongoose.model(ticketsCollection, ticketsSchema)

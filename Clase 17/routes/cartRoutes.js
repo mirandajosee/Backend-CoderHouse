@@ -1,10 +1,10 @@
 import {Router} from "express"
 import { CartController } from "../controllers/carts.controller.js";
-
+import { allow } from "../middleware/authentication.js";
 const cartRouter = Router()
 
 const {
-    getCart,
+    getCartById,
     createCart,
     updateCart,
     deleteCart,
@@ -15,10 +15,10 @@ const {
 } = new CartController()
 
 cartRouter.post('/', createCart)
-cartRouter.get('/:cid', getCart)
+cartRouter.get('/:cid', getCartById)
 cartRouter.put('/:cid', updateCart)
 cartRouter.delete('/:cid', deleteCart)
-cartRouter.post('/:cid/products/:pid', addProductToCart)
+cartRouter.post('/:cid/products/:pid',(req,res,next) => allow(req,res,next,["user"]) ,addProductToCart)
 cartRouter.delete('/:cid/products/:pid', deleteProductFromCart)
 cartRouter.put('/:cid/products/:pid', updateProductToCart)
 cartRouter.post('/:cid/purchase', purchaseCart)

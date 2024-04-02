@@ -1,38 +1,53 @@
-import { productsModel } from "../models/products.model"
+import { productsModel } from "../models/products.model.js"
 
 
 
-export default class ProductDaosMongo {
+export default class ProductDaoMongo {
     constructor(){
         this.product = productsModel        
     }
 
-    async get({limit=10, page=1, sort="default"}){       
+    async getPageProducts({limit=10, pageQuery=1, sort="default"}){     
+        try{  
+        const order={"asc":1,"desc":-1}
         const result =sort=="default"? 
-            await this.product.paginate({}, {limit, page: pageQuery, lean: true}):
-            await this.product.paginate({}, {limit, page: pageQuery, sort: {price: order[sort]}, lean: true})
+            await this.product.paginate({status:true}, {limit, page: pageQuery, lean: true}):
+            await this.product.paginate({status:true}, {limit, page: pageQuery, sort: {price: order[sort]}, lean: true})
         result.status="success"
         result.payload=result.docs
-        return await result                               
+        return await result}
+        catch(err) {console.log(err)}                          
+    }
+    async getProducts(config){       
+        try {
+        return await this.product.find({status:true}).lean()}
+        catch(err){console.log(err)}
+        
+    }
+    async getProductById(pid){
+        try{
+        return await this.product.findById(pid).lean() }   
+        catch(err) {console.log(err)}
+    }
+
+
+    async addProduct(newProduct){       
+        try {
+        return await this.product.create(newProduct).lean()}
+        catch(err){console.log(err)}
         
     }
 
-    async getById(pid){        
-        return await this.product.findById(pid).lean()        
+    async updateProduct(pid, updateProduct){
+        try    {
+        return await this.product.findByIdAndUpdate({_id: pid}, updateProduct, {new: true}).lean()}
+        catch(err){console.log(err)}
     }
 
-
-    async create(newProduct){        
-        return await this.product.create(newProduct).lean()
-        
-    }
-
-    async update(pid, updateProduct){        
-        return await this.product.findByIdAndUpdate({_id: pid}, updateProduct, {new: true}).lean()
-    }
-
-    async remove(pid){       
-        return await this.product.findByIdAndUpdate({ _id: pid }, { isActive: false }, {new: true}).lean()      
+    async deleteProduct(pid){       
+        try{
+        return await this.product.findByIdAndUpdate({ _id: pid,status:true }, { status: false }, {new: true}).lean()  }
+        catch(err){console.log(err)}    
     }
 
 }

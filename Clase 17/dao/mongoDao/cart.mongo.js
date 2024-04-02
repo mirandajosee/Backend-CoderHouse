@@ -1,13 +1,17 @@
-import { cartsModel } from "../models/carts.model"
+import { cartsModel } from "../models/carts.model.js"
+import { productsModel } from "../models/products.model.js";
+import { usersModel } from "../models/user.model.js";
+import { ticketsModel } from "../models/tickets.model.js";
 
-export class CartDaoMongo{    
+export default class CartDaoMongo{    
     constructor(){
         this.Cart = cartsModel
+        this.Products = productsModel
     }
 
     async get(){
         try {
-            return await this.Cart.find()
+            return await this.Cart.find({})
             
         } catch (error) {
             return  new Error(error)
@@ -31,27 +35,10 @@ export class CartDaoMongo{
         }
     }
 
-    async update(cid, product){        
+    async updateCart(cid,newCart){        
         try {
-            const updatedCart = await this.Cart.findOneAndUpdate(
-                { _id: cid, 'products.product': product._id },
-                { $inc: { 'products.$.quantity': product.quantity } },
-                { new: true }
-            )
-          
-            if (updatedCart) {
-                // El producto ya estaba en el carrito, se actualizó su cantidad
-                return updatedCart
-            }
-          
-            // El producto no estaba en el carrito, se agrega con quantity en 1
-            const newProductInCart = await this.Cart.findOneAndUpdate(
-                { _id: cid },
-                { $push: { products: { product: product._id, quantity: product.quantity } } },
-                { new: true, upsert: true }
-            )
-          
-            return newProductInCart
+            const updatedCart = await this.Cart.findOneAndUpdate({_id:cid},newCart,{new:true}).lean()
+            return updatedCart
         } catch (error) {
             return new Error('Error adding product to cart'+error)
         }
@@ -61,11 +48,17 @@ export class CartDaoMongo{
     // Delete api/carts/:cid/products/:pid
     async deleteItem(cid, pid){
         try {
-            return await this.Cart.findOneAndUpdate(
-                { _id: cid },
-                { $pull: { products: { product: pid } } },
-                { new: true }
-            )
+            const cart = await this.Cart.findById({_id: cid}).lean()
+            const productoId = cart.products.findIndex(prod => prod.product._id==pid)
+                if (productoId!=-1){
+                    cart.products.splice(productoId,1)
+                    const newCart = await this.Cart.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
+                    console.log("Elemento borrado exitosamente")
+                    return newCart
+                } else {
+                    res.send("Product Id not found")
+                    return console.log("Product Id not found")
+                }
         } catch (error) {
             return new Error('Error deleting product from cart'+error)
         }
@@ -74,7 +67,7 @@ export class CartDaoMongo{
     // vaciar carrito
     async delete(cid){
         try {
-            // console.log(cid)
+            //const cart = await cartsModel.findById({_id: cid}).lean() chequear si existe
             return await this.Cart.findOneAndUpdate(
                 { _id: cid },
                 { $set: { products: [] } },
@@ -82,6 +75,75 @@ export class CartDaoMongo{
             )
         } catch (error) {
             return new Error('Error deleting cart'+ error)
+        }
+    }
+    async updateProductToCart(cid,pid,quantity){
+        try{
+        const cart = await this.Cart.findById({_id: cid}).lean()
+        const productoId = cart.products.findIndex(prod => prod.product._id==pid)
+        if (productoId!=-1){
+        let newCart= cart.products
+        newCart[productoId].quantity=quantity
+        cart.products=newCart
+        const result = await this.Cart.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
+        res.json(result)
+        } 
+        else {
+            res.send("Producto no encontrado")
+        }}catch(error)
+        {return new Error('Error deleting cart'+ error)}
+    }
+    
+    async addProductToCart(cartId,productId){
+        try{
+            const producto = await productsModel.findById({_id:productId}).lean()
+            if (producto){
+                const newProd = {product: productId, quantity:1}
+                const newCart = await this.Cart.findOneAndUpdate({_id:cartId},{$addToSet:{products:newProd}},{new:true}).lean()
+                //res.send(newCart)
+                return newCart
+            }
+            else{
+                    res.status(400).send("Producto no encontrado")
+                }
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
+
+    async purchaseCart(cid){
+        try {
+            const email= (await usersModel.findOne({cartID:cid}).lean()).email
+            const products= (await this.Cart.findOne({_id:cid}).lean()).products
+            let amount=0
+            let newCart=[]
+            products.forEach(async (prod)=> 
+            {
+                if(prod.product.stock>=prod.quantity){
+                    amount+=prod.product.price * prod.quantity
+                    await productsModel.findOneAndUpdate(
+                        { _id: prod.product._id },
+                        { $set: { stock: prod.product.stock-prod.quantity } },
+                        { new: true }
+                    )
+                }
+                else{
+                    newCart.push(prod)
+                }
+            })
+            await this.Cart.findOneAndUpdate(
+                { _id: cid },
+                { $set: { products: newCart } },
+                { new: true }
+            )
+
+            await ticketsModel.create({purchaser:email,amount:amount})
+            const ticket = await ticketsModel.findOne({purchaser:email,amount:amount},{},{sort:{'purchase_datetime':-1}}).lean()
+            return ticket
+            
+        } catch (error) {
+            return  new Error(error)
         }
     }
 
