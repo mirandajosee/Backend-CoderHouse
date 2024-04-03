@@ -15,6 +15,9 @@ import passport from "passport"
 import { initializePassport } from "../config/passportConfig.js"
 import { default as MongoStore } from "connect-mongo"
 import { config as dotenvConfig } from "dotenv"
+import { CustomError } from "../errors/CustomError.js"
+import { EnumErrors } from "../errors/EnumErrors.js"
+import { handleErrors } from "../errors/handleErrors.js"
 dotenvConfig({path:'./.env.production'})
 
 
@@ -69,6 +72,14 @@ initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
 
+app.use('*', async (req, res)=>{
+    CustomError.createError({
+        name:"Routing error",
+        cause:"This path does not exist",
+        message:"This endpoint or file does not exist, check the grammar or the existance of the path",
+        code:EnumErrors.ROUTING_ERROR
+    })
+})
 
 
 io.on('connection', socket=> {
@@ -77,26 +88,23 @@ io.on('connection', socket=> {
     socket.on('newProduct', async(data) => {
         try
         {
-        productList.push(await productService.addProduct(data))
+        await productService.addProduct(data)
+        productList=await productService.getProducts()
+        io.emit('updateList', productList)
         }catch(err){
             console.log(err)
         }
         
         // Emitiendo updateList
-        io.emit('updateList', async()=>{
-            try{
-                await productService.getProducts()
-            }catch(err){
-                console.log(err)
-            }
-        })
+        io.emit('updateList', productList)
         
         
     })
     // Escuchando deleteProducts
     socket.on('deleteProduct', async (productId) => {
         try{
-            const filteredList=await productService.deleteProduct(productId)
+            await productService.deleteProduct(productId.id)
+            const filteredList= await productService.getProducts()
             io.emit('updateList', filteredList)}
         catch(err)
         {console.log(err)}
@@ -129,3 +137,5 @@ io.on('connection', socket=> {
         {console.log(err)}
     })
 })
+
+app.use(handleErrors)

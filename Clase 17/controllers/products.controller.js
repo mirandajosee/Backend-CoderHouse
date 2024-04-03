@@ -1,4 +1,17 @@
 import { productService } from "../repositories/services.js"
+import {faker} from '@faker-js/faker'
+
+const generateProducts = () => {
+    return {
+        title: faker.commerce.productName(),
+        price: parseInt(faker.commerce.price()),
+        stock: parseInt(faker.string.numeric(3)),
+        desciption: faker.commerce.productDescription(),
+        _id: faker.database.mongodbObjectId(),
+        thumbnail: [faker.image.url()],
+        code:faker.string.alphanumeric(20)
+    }
+}
 
 export class ProductController{
     constructor(){}
@@ -35,6 +48,14 @@ export class ProductController{
     createProduct= async(req, res) => {
         try{
         const newProduct = req.body
+        if (!newProduct.title || !newProduct.code || !newProduct.description || !newProduct.price || !newProduct.stock ){
+            CustomError.createError({
+                name:"Invalid or missing params",
+                cause:"Needed params were missing or had a wrong type",
+                code:"2",
+                message:`Dato faltante o de tipo incorrecto, ver formato correcto y corrregir, se recibió ${newProduct}`
+            })
+        }
         const result = productService.addProduct(newProduct)
         res.json(result)}
         catch (err){
@@ -46,6 +67,14 @@ export class ProductController{
         try{
             const updatedProduct = req.body
             const id = req.params.pid
+            if (!id || !updatedProduct ){
+                CustomError.createError({
+                    name:"Invalid or missing params",
+                    cause:"Needed params were missing or had a wrong type",
+                    code:"2",
+                    message:`Dato faltante o de tipo incorrecto\n Se recibió id=${typeof(id)},updateProduct=${typeof(updatedProduct)}}`
+                })
+            }
             result = productService.updateProduct(id=id,update=updatedProduct)
             res.status(200).send(result)
         }
@@ -64,6 +93,29 @@ export class ProductController{
                     console.log(err)
                 }
     
+    }
+
+    mockingProducts = async (req,res) =>
+    {
+        try{
+            const {quantity=100}=parseInt(req.query)
+            let products = []
+            if (!quantity ){
+                CustomError.createError({
+                    name:"Invalid or missing params",
+                    cause:"Needed params were missing or had a wrong type",
+                    code:"2",
+                    message:`Dato faltante o de tipo incorrecto\n Se recibió quantity=${typeof(quantity)}`
+                })
+            }
+            for (let i = 0; i < quantity; i++) {
+                products.push(generateProducts())
+            }
+            res.send(products)
+        }
+        catch(err){
+            console.log(err)
+        }
     }
 
 }

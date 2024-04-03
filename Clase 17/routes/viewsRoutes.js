@@ -1,7 +1,7 @@
 import express from "express"
 import { messagesModel } from "../dao/models/messages.model.js";
 import { productService,cartService } from "../repositories/services.js";
-
+import { CustomError } from "../errors/CustomError.js";
 const viewsRouter = express.Router();
 
 
@@ -70,6 +70,14 @@ viewsRouter.get('/carts/:cid', async(req, res) => {
     //const cid="65ca19112dc0eaafade1935e" //Puede servir para testear ya que se usa en views
     // también "65ca2a74be97e0dca5dc3ac8"
     const cart=await cartService.getCartById(cid)
+    if (!cart || cid.length<24){
+        CustomError.createError({
+            name:"Cart not found",
+            code:3,
+            cause:"The cart does not exist in the current database",
+            message:`El carrito ${cid} no existe o no se encuentra en la base de datos actual`
+        })
+    }
     res.render('cart', { cart})}
     catch(err){
         console.log(err)
