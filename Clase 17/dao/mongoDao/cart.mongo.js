@@ -49,7 +49,7 @@ export default class CartDaoMongo{
     async deleteItem(cid, pid){
         try {
             const cart = await this.Cart.findById({_id: cid}).lean()
-            if (!cart){
+            if (!cart||cid.length<24){
                 CustomError.createError({
                     name:"Cart not found",
                     code:3,
@@ -79,7 +79,15 @@ export default class CartDaoMongo{
     // vaciar carrito
     async delete(cid){
         try {
-            //const cart = await cartsModel.findById({_id: cid}).lean() chequear si existe
+            const cart = await cartsModel.findOne({_id: cid}).lean()
+            if (!cart || cid.length<24){
+                CustomError.createError({
+                    name:"Cart not found",
+                    code:3,
+                    cause:"The cart does not exist in the current database",
+                    message:`El carrito ${cid} no existe o no se encuentra en la base de datos actual`
+                })
+            }
             return await this.Cart.findOneAndUpdate(
                 { _id: cid },
                 { $set: { products: [] } },
@@ -92,7 +100,7 @@ export default class CartDaoMongo{
     async updateProductToCart(cid,pid,quantity){
         try{
         const cart = await this.Cart.findById({_id: cid}).lean()
-        if (!cart){
+        if (!cart || cid.length<24){
             CustomError.createError({
                 name:"Cart not found",
                 code:3,
@@ -122,7 +130,7 @@ export default class CartDaoMongo{
     async addProductToCart(cartId,productId){
         try{
             const cart = await this.Cart.findById({_id: cid}).lean()
-            if (!cart){
+            if (!cart || cartId.length<24){
                 CustomError.createError({
                     name:"Cart not found",
                     code:3,
@@ -154,12 +162,12 @@ export default class CartDaoMongo{
     async purchaseCart(cid){
         try {
             const cart = await this.Cart.findById({_id: cid}).lean()
-            if (!cart){
+            if (!cart || cid.length<24){
                 CustomError.createError({
                     name:"Cart not found",
                     code:3,
                     cause:"The cart does not exist in the current database",
-                    message:`El carrito ${cartId} no existe o no se encuentra en la base de datos actual`
+                    message:`El carrito ${cid} no existe o no se encuentra en la base de datos actual`
                 })
             }
             const email= (await usersModel.findOne({cartID:cid}).lean()).email
