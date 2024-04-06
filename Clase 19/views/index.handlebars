@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<center>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos</title>
+</head>
+<body>
+    {{#if user}}
+    <p>Bienvenido {{user.name}}, tu rol es {{user.role}}</p>
+
+    <form action="/carts/{{user.cartID}}" method="get">
+        <input type="submit" value="Ir al carrito">
+    </form>
+
+    <form action="/api/users/logout" method="post">
+        <input type="submit" value="Cerrar sesión">
+    </form>
+    {{/if }}
+
+    <h1>Products list</h1>
+    <ul>
+        {{#if docs}}
+            {{#each docs}}
+                <p>Nombre: {{this.title}} | Precio: {{this.price}}</p>
+                <button onclick="addToCart(`{{this._id}}`)">Agregar al carrito</button>
+            {{/each}}
+
+            {{else}}
+            {{#each products}}
+                <p>Nombre: {{this.title}} | Precio: {{this.price}}</p>
+                <button onclick="addToCart(`{{this._id}}`)">Agregar al carrito</button>
+            {{/each}}
+        {{/if}}
+
+    </ul>
+{{#if hasNextPage}}
+            <a href="/products?page={{nextPage}}&limit={{limit}}&sort={{sort}}">Página Siguiente</a>
+{{/if}}
+
+{{#if hasPrevPage}}
+            <a href="/products?page={{prevPage}}&limit={{limit}}&sort={{sort}}">Página Anterior</a>
+{{/if}}
+
+<form id="limitForm">
+        <label for="title">Productos por página:</label>
+        <input type="number" id="limit" name="limit" min="1" required>
+        {{#if docs}}
+        <select name="sort" id="sort" onchange="updateSort()">
+            <option value={{sort}} type="string">Seleccione el orden</option>
+            <option value="asc" type="string">Ascendente por precio</option>
+            <option value="desc" type="string">Descendente por precio</option>
+            <option value="default" type="string">Por defecto</option>
+        </select>
+        {{/if}}
+</form>
+
+</center>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    function addToCart(pid){
+        {{#if user}}
+        const socket=io()
+        socket.emit("addToCart",{
+            cid:'{{user.cartID}}',
+            pid:pid
+        })
+        {{/if}}
+        {{#unless user}}
+        location.assign(location.origin+"/"+"register")
+        {{/unless}}
+        
+        
+    }
+</script>
+<script>
+    function updateSort(){
+        let sort=document.getElementById('sort').value.trim()||`{{{sort}}}`
+        let limit=document.getElementById('limit').value.trim()||{{limit}}
+        location.assign(location.origin+"/products"+"?sort="+sort+"&limit="+limit)
+    }
+</script>
+
+</script>
+</body>
+</html>
