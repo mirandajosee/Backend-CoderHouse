@@ -129,7 +129,7 @@ export default class CartDaoMongo{
     
     async addProductToCart(cartId,productId){
         try{
-            const cart = await this.Cart.findById({_id: cid}).lean()
+            const cart = await this.Cart.findById({_id: cartId}).lean()
             if (!cart || cartId.length<24){
                 CustomError.createError({
                     name:"Cart not found",

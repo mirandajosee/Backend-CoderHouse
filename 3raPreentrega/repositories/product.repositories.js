@@ -7,8 +7,7 @@ export default class ProductRepositories { // UserServices
         try{  
             objConfig.limit = objConfig.limit &&  parseInt(objConfig.limit)
             objConfig.page  = objConfig.page  && parseInt(objConfig.page)
-            objConfig.sort  = objConfig.sort  && parseInt(objConfig.sort)
-            return await this.dao.getProducts(objConfig)}
+            return await this.dao.getPageProducts(objConfig)}
         catch(err) {console.log(err)}                          
     }
 

@@ -2,6 +2,7 @@
 //const { promises, existsSync} = require('fs')
 import fs from "node:fs"
 import { promises, existsSync} from "node:fs"
+import { CustomError } from "../errors/CustomError"
 
 export default class ProductManager {
     constructor(){
@@ -34,7 +35,12 @@ export default class ProductManager {
             !isNaN(product.stock)){
             let productos= this.getProducts()
             if (productos.find((prod)=>prod.code==product.code)){
-                console.log("Este producto tiene un código ya utilizado")
+                CustomError.createError({
+                    name:"Product not found",
+                    code:3,
+                    cause:"The product code already exist in the current database",
+                    message:`El producto con código ${product.code} ya existe en la base de datos actual`
+                })
             }else {
             product.status = product.status===false? product.status : true
             const lastId=productos.slice(-1)[0]? Math.max(productos.length , productos.slice(-1)[0].id)+1 : 1
@@ -44,7 +50,12 @@ export default class ProductManager {
             return product
             }
         }else {
-        console.log("Se ingresó un producto incorrecto, verifique los campos obligatorios")}
+            CustomError.createError({
+                name:"Invalid or missing params",
+                cause:"Needed params were missing or had a wrong type",
+                code:"2",
+                message:`Se ingresó un producto incorrecto, verifique los campos obligatorios\n Se recibió product=${(product)}`
+            })}
     }
 
 
@@ -55,7 +66,12 @@ export default class ProductManager {
         if(productById){
             return productById
         }else{
-            console.log("Id not found")
+            CustomError.createError({
+                name:"Product not found",
+                code:3,
+                cause:"The product does not exist in the current database",
+                message:`El producto ${id} no existe o no se encuentra en la base de datos actual`
+            })
             return}
     }
 
@@ -77,11 +93,22 @@ export default class ProductManager {
                         fs.writeFileSync(this.path,JSON.stringify(data,null,2),"utf-8")
                         return console.log("Producto actualizado exitosamente")
                     }else {
-                        console.log("Se ingresó un producto incorrecto, verifique los campos obligatorios")
+                        CustomError.createError({
+                            name:"Invalid or missing params",
+                            cause:"Needed params were missing or had a wrong type",
+                            code:"2",
+                            message:`Se ingresó un producto incorrecto, verifique los campos obligatorios\n Se recibió update=${(update)}`
+                        })
                     }
 
             } else {
-            return console.log("Id not found")
+                CustomError.createError({
+                    name:"Product not found",
+                    code:3,
+                    cause:"The product does not exist in the current database",
+                    message:`El producto ${id} no existe o no se encuentra en la base de datos actual`
+                })
+                return
             }
     }
 
@@ -96,7 +123,13 @@ export default class ProductManager {
                 console.log("Elemento borrado exitosamente")
                 return this.getProducts()
             } else {
-                return console.log("Id not found")
+                CustomError.createError({
+                    name:"Product not found",
+                    code:3,
+                    cause:"The product does not exist in the current database",
+                    message:`El producto ${id} no existe o no se encuentra en la base de datos actual`
+                })
+                return
             }
             
         } catch (err) {

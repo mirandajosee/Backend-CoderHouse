@@ -18,7 +18,7 @@ export default class ProductDaoMongo {
                 name:"Invalid or missing params",
                 cause:"Needed params were missing or had a wrong type",
                 code:"2",
-                message:`Dato faltante o de tipo incorrecto\n Se recibió limit=${typeof(limit)},sort=${typeof(sort)},pageQuery=${typeof(pageQuery)}`
+                message:`Dato faltante o de tipo incorrecto\n Se recibió limit=${limit},sort=${sort},pageQuery=${pageQuery}`
             })
         }
         result.status="success"

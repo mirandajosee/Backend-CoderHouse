@@ -16,7 +16,7 @@ const generateProducts = () => {
 export class ProductController{
     constructor(){}
 
-    getProducts = async (req, res)=> {
+    getPageProducts = async (req, res)=> {
         try{
         const {limit=10,pageQuery=1,sort="default"}=req.query
         const config = {limit:limit,pageQuery:pageQuery,sort:sort}
@@ -44,6 +44,16 @@ export class ProductController{
         console.log(err)
     }
     }
+
+    getProducts = async(req,res) =>{
+        try{
+        const products=productService.getProducts()
+        res.json(products)
+        }
+        catch(err){
+            console.log(err)
+        }
+        }
 
     createProduct= async(req, res) => {
         try{

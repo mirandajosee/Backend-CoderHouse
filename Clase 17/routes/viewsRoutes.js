@@ -40,14 +40,13 @@ viewsRouter.get('/products',async (req,res)=>{
     const {limit=10,page=1,sort="default"}=req.query
     const user=req.session.user
     try{
-        const {
-            docs,
+        const {docs,
             hasPrevPage, 
             hasNextPage,
             prevPage, 
             nextPage,
             pageAct
-        } = await productService.getPageProducts({limit:limit,pageQuery:page,sort:sort})
+            }= await productService.getPageProducts({limit:limit,pageQuery:page,sort:sort})
         const products = await productService.getProducts({limit:limit})
         //const products= productService.getProducts({})
         res.render('index', {products,limit,sort,page,

@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import { CustomError } from "../errors/CustomError"
 
 export default class CartManager {
     constructor() {
@@ -31,20 +32,35 @@ export default class CartManager {
             if (existingProduct) {
                 existingProduct.quantity++
             } else {
+                //agregar si no existe el pid
                 cart.products.push({ product: productId, quantity: 1 })
             }
 
             this.saveCartsToFile()
             return cart
         }
-    }
+        else {
+                CustomError.createError({
+                    name:"Cart not found",
+                    code:3,
+                    cause:"The cart does not exist in the current database",
+                    message:`El carrito ${cartId} no existe o no se encuentra en la base de datos actual`
+                })
+            }
+        }
+    
 
     getCartById = (id) => {
         id=parseInt(id)
         const cart = this.carts.find(cart => cart.id == id)
         if (cart){return cart}
         else{
-            return console.log("Error 404, no se encontró este cart")
+                CustomError.createError({
+                    name:"Cart not found",
+                    code:3,
+                    cause:"The cart does not exist in the current database",
+                    message:`El carrito ${id} no existe o no se encuentra en la base de datos actual`
+                })
         }
     }
 

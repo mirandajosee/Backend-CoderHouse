@@ -1,5 +1,5 @@
 import { productsModel } from "../models/products.model.js"
-
+import { CustomError } from "../../errors/CustomError.js"
 
 
 export default class ProductDaoMongo {
@@ -13,6 +13,14 @@ export default class ProductDaoMongo {
         const result =sort=="default"? 
             await this.product.paginate({status:true}, {limit, page: pageQuery, lean: true}):
             await this.product.paginate({status:true}, {limit, page: pageQuery, sort: {price: order[sort]}, lean: true})
+        if (!limit || !sort || !pageQuery ){
+            CustomError.createError({
+                name:"Invalid or missing params",
+                cause:"Needed params were missing or had a wrong type",
+                code:"2",
+                message:`Dato faltante o de tipo incorrecto\n Se recibió limit=${limit},sort=${sort},pageQuery=${pageQuery}`
+            })
+        }
         result.status="success"
         result.payload=result.docs
         return await result}
@@ -26,27 +34,54 @@ export default class ProductDaoMongo {
     }
     async getProductById(pid){
         try{
-        return await this.product.findById(pid).lean() }   
+            const result=await this.product.findById(pid).lean()
+            if (!result){
+                CustomError.createError({
+                    name:"Product not found",
+                    code:3,
+                    cause:"The product does not exist in the current database",
+                    message:`El producto ${pid} no existe o no se encuentra en la base de datos actual`
+                })
+            }
+            return result }   
         catch(err) {console.log(err)}
     }
 
 
     async addProduct(newProduct){       
         try {
-        return await this.product.create(newProduct).lean()}
+        return await this.product.create(newProduct)}
         catch(err){console.log(err)}
         
     }
 
     async updateProduct(pid, updateProduct){
         try    {
-        return await this.product.findByIdAndUpdate({_id: pid}, updateProduct, {new: true}).lean()}
+            const result=await this.product.findByIdAndUpdate({_id: pid}, updateProduct, {new: true}).lean()
+            if (!result){
+                CustomError.createError({
+                    name:"Product not found",
+                    code:3,
+                    cause:"The product does not exist in the current database",
+                    message:`El producto ${pid} no existe o no se encuentra en la base de datos actual`
+                })
+            }
+            return result}
         catch(err){console.log(err)}
     }
 
     async deleteProduct(pid){       
         try{
-        return await this.product.findByIdAndUpdate({ _id: pid,status:true }, { status: false }, {new: true}).lean()  }
+            const result=await this.product.findByIdAndUpdate(pid, { status: false }, {new: true}).lean()
+            if (!result){
+                CustomError.createError({
+                    name:"Product not found",
+                    code:3,
+                    cause:"The product does not exist in the current database",
+                    message:`El producto ${pid} no existe o no se encuentra en la base de datos actual`
+                })
+            }
+            return result  }
         catch(err){console.log(err)}    
     }
 
