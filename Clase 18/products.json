@@ -1,0 +1,120 @@
+[
+  {
+    "title": "Remera Chainsaw Man - Edición limitada",
+    "thumbnail": [
+      "Enlace1"
+    ],
+    "price": 4200,
+    "stock": 500,
+    "code": "1",
+    "description": "Producto original importado",
+    "id": 1,
+    "status": true
+  },
+  {
+    "title": "Remera Naruto",
+    "thumbnail": [
+      "Enlace2"
+    ],
+    "price": 9000,
+    "stock": 700,
+    "code": "2",
+    "description": "Remera elaborada en Argentina",
+    "id": 2,
+    "status": true
+  },
+  {
+    "title": "Drone",
+    "thumbnail": [
+      "Enlace3"
+    ],
+    "price": 35000,
+    "stock": 600,
+    "code": "3",
+    "description": "Drone importado de China",
+    "id": 3,
+    "status": true
+  },
+  {
+    "title": "Remera JoJo's Bizarre Adventure",
+    "thumbnail": [
+      "Enlace4"
+    ],
+    "price": 5000,
+    "stock": 50,
+    "code": "4",
+    "description": "Producto original importado",
+    "id": 4,
+    "status": true
+  },
+  {
+    "title": "Termo eléctrico",
+    "thumbnail": [
+      "Enlace5"
+    ],
+    "price": 50000,
+    "stock": 800,
+    "code": "5",
+    "description": "Producto hecho en Argentina, la tapa se usa como mate, dos modos de temperatura, hecho en Argentina",
+    "id": 5,
+    "status": true
+  },
+  {
+    "title": "Remera Mirai Nikki",
+    "thumbnail": [
+      "Enlace6"
+    ],
+    "price": 7000,
+    "stock": 810,
+    "code": "6",
+    "description": "Producto traido desde Japón, edición limitada",
+    "id": 6,
+    "status": true
+  },
+  {
+    "title": "Nintendo switch",
+    "thumbnail": [
+      "Enlace7"
+    ],
+    "price": 500000,
+    "stock": 25,
+    "code": "7",
+    "description": "Producto traido desde Japón, disponible 20 días desde tu compra",
+    "id": 7,
+    "status": true
+  },
+  {
+    "title": "Figura de Freezer - Dragon Ball Z",
+    "thumbnail": [
+      "Enlace8"
+    ],
+    "price": 15000,
+    "stock": 500,
+    "code": "8",
+    "description": "Replica, producto artesanal argentino",
+    "id": 8,
+    "status": true
+  },
+  {
+    "title": "Robot aspiradora",
+    "thumbnail": [
+      "Enlace9"
+    ],
+    "price": 150000,
+    "stock": 500,
+    "code": "9",
+    "description": "Producto traido desde China. No detecta elementos. Choca mucho pero limpia y trapea",
+    "id": 9,
+    "status": true
+  },
+  {
+    "title": "Robot aspiradora 8",
+    "description": "Producto traido desde China. Detecta elementos. Choca mucho pero limpia y trapea",
+    "price": "200000",
+    "thumbnail": [],
+    "code": "10",
+    "stock": 350,
+    "status": true,
+    "id": 10
+  }
+]
