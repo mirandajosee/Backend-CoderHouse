@@ -71,7 +71,7 @@ app.use('/',viewsRouter)
 app.use('/testing/',testingRouter)
 
 const httpServer= app.listen(PORT, ()=>{
-    console.log(`Escuchando en el puerto ${PORT}`)
+    logger.debug(`Escuchando en el puerto ${PORT}`)
 })
 
 let productList=[]
@@ -102,7 +102,7 @@ app.use('*', async (req, res)=>{
 
 
 io.on('connection', socket=> {
-    logger.debug(err);
+    logger.debug('Nuevo cliente conectado');
     // Escuchando newProduct
     socket.on('newProduct', async(data) => {
         try
@@ -111,7 +111,7 @@ io.on('connection', socket=> {
         productList=await productService.getProducts()
         io.emit('updateList', productList)
         }catch(err){
-            console.log(err)
+            logger.error(err)
         }
         
         // Emitiendo updateList

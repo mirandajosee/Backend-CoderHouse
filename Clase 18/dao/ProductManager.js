@@ -3,7 +3,7 @@
 import fs from "node:fs"
 import { promises, existsSync} from "node:fs"
 import { CustomError } from "../errors/CustomError"
-import {logger} from '../logger.js'
+import { logger } from "../logger/logger.js"
 
 export default class ProductManager {
     constructor(){
@@ -92,7 +92,8 @@ export default class ProductManager {
                 !isNaN(producto.stock)){
                         data[data.findIndex(prod => prod.id==id)]=producto
                         fs.writeFileSync(this.path,JSON.stringify(data,null,2),"utf-8")
-                        return console.log("Producto actualizado exitosamente")
+                        logger.info("Producto actualizado exitosamente")
+                        return 
                     }else {
                         CustomError.createError({
                             name:"Invalid or missing params",
@@ -121,7 +122,7 @@ export default class ProductManager {
             if (productoId!=-1){
                 data.splice(productoId,1)
                 fs.writeFileSync(this.path,JSON.stringify(data,null,2),"utf-8")
-                console.log("Elemento borrado exitosamente")
+                logger.info("Elemento borrado exitosamente")
                 return this.getProducts()
             } else {
                 CustomError.createError({

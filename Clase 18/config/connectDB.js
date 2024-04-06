@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { config as dotenvConfig } from "dotenv"
 import  {env} from "../utils.js"
+import { logger } from "../logger/logger.js";
 
 switch(env){
     case "PROD": 
@@ -18,8 +19,8 @@ switch(env){
 export const connectBD = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URL)
-        console.log('Base de datos conectada')        
+        logger.debug('Base de datos conectada')        
     } catch (error) {
-        console.log(error)
+        logger.error(error)
     }
 }

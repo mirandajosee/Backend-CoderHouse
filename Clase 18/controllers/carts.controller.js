@@ -1,6 +1,7 @@
 import { CommandInstance } from "twilio/lib/rest/preview/wireless/command.js"
 import { cartService } from "../repositories/services.js"
 import { sendMail } from "../utils.js"
+import { logger } from "../logger/logger.js"
 
 export class CartController{
     constructor(){}
@@ -20,7 +21,7 @@ export class CartController{
         cart? res.json(cart.products) : res.status(404).json({ error: 'Carrito no encontrado' })
         
         }catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
     createCart= async(req, res) => {
@@ -29,7 +30,7 @@ export class CartController{
             res.json(newCart)
             }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
     updateCart=async(req, res) => {
@@ -48,7 +49,7 @@ export class CartController{
             res.json(result)
             }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
     deleteCart=async(req, res) => {
@@ -64,10 +65,10 @@ export class CartController{
             }
             newCart = cartService.delete(cid)
             res.json(newCart)
-            return console.log("Carrito vacío exitosamente")
+            return logger.info("Carrito vacío exitosamente")
             }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -90,7 +91,7 @@ export class CartController{
             res.json(result)
         }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -110,7 +111,7 @@ export class CartController{
             res.json(result)
             }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -121,7 +122,7 @@ export class CartController{
             res.send(result)
             }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -138,7 +139,7 @@ export class CartController{
             res.send(ticket)
         }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 

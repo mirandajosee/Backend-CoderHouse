@@ -3,6 +3,8 @@ import { productsModel } from "../models/products.model.js";
 import { usersModel } from "../models/user.model.js";
 import { ticketsModel } from "../models/tickets.model.js";
 import { CustomError } from "../../errors/CustomError.js";
+import { logger } from "../../logger/logger.js";
+
 export default class CartDaoMongo{    
     constructor(){
         this.Cart = cartsModel
@@ -14,7 +16,7 @@ export default class CartDaoMongo{
             return await this.Cart.find({})
             
         } catch (error) {
-            return  new Error(error)
+            return  logger.error(error)
         }
     }
     
@@ -23,7 +25,7 @@ export default class CartDaoMongo{
             const res = await this.Cart.findOne({_id: cid}).lean()
             return res
         } catch (error) {
-            return new Error(error)
+            return logger.error(error)
         }
     }
 
@@ -31,7 +33,7 @@ export default class CartDaoMongo{
         try {                
             return await this.Cart.create({products: [] })
         } catch (err) {
-           return new Error('Error creating cart'+err);
+           return logger.error('Error creating cart'+err);
         }
     }
 
@@ -40,7 +42,7 @@ export default class CartDaoMongo{
             const updatedCart = await this.Cart.findOneAndUpdate({_id:cid},newCart,{new:true}).lean()
             return updatedCart
         } catch (error) {
-            return new Error('Error adding product to cart'+error)
+            return logger.error('Error adding product to cart'+error)
         }
 
     }
@@ -61,7 +63,7 @@ export default class CartDaoMongo{
                 if (productoId!=-1){
                     cart.products.splice(productoId,1)
                     const newCart = await this.Cart.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
-                    console.log("Elemento borrado exitosamente")
+                    logger.info("Elemento borrado exitosamente")
                     return newCart
                 } else {
                     CustomError.createError({
@@ -72,7 +74,7 @@ export default class CartDaoMongo{
                     })
                 }
         } catch (error) {
-            return new Error('Error deleting product from cart'+error)
+            return logger.error('Error deleting product from cart'+error)
         }
     }
 
@@ -94,7 +96,7 @@ export default class CartDaoMongo{
                 { new: true }
             )
         } catch (error) {
-            return new Error('Error deleting cart'+ error)
+            return logger.error('Error deleting cart'+ error)
         }
     }
     async updateProductToCart(cid,pid,quantity){
@@ -124,7 +126,7 @@ export default class CartDaoMongo{
                 message:`El producto ${pid} no existe o no se encuentra en la base de datos actual`
             })
         }}catch(error)
-        {return new Error('Error deleting cart'+ error)}
+        {return logger.error('Error deleting cart'+ error)}
     }
     
     async addProductToCart(cartId,productId){
@@ -155,7 +157,7 @@ export default class CartDaoMongo{
                 }
         }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -207,7 +209,7 @@ export default class CartDaoMongo{
             return ticket
             
         } catch (error) {
-            return  new Error(error)
+            return  logger.error(error)
         }
     }
 

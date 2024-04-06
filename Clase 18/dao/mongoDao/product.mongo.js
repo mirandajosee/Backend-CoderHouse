@@ -1,5 +1,6 @@
 import { productsModel } from "../models/products.model.js"
 import { CustomError } from "../../errors/CustomError.js"
+import { logger } from "../../logger/logger.js"
 
 
 export default class ProductDaoMongo {
@@ -24,12 +25,12 @@ export default class ProductDaoMongo {
         result.status="success"
         result.payload=result.docs
         return await result}
-        catch(err) {console.log(err)}                          
+        catch(err) {logger.error(err)}                          
     }
     async getProducts(config){       
         try {
         return await this.product.find({status:true}).lean()}
-        catch(err){console.log(err)}
+        catch(err){logger.error(err)}
         
     }
     async getProductById(pid){
@@ -44,14 +45,14 @@ export default class ProductDaoMongo {
                 })
             }
             return result }   
-        catch(err) {console.log(err)}
+        catch(err) {logger.error(err)}
     }
 
 
     async addProduct(newProduct){       
         try {
         return await this.product.create(newProduct)}
-        catch(err){console.log(err)}
+        catch(err){logger.error(err)}
         
     }
 
@@ -67,7 +68,7 @@ export default class ProductDaoMongo {
                 })
             }
             return result}
-        catch(err){console.log(err)}
+        catch(err){logger.error(err)}
     }
 
     async deleteProduct(pid){       
@@ -82,7 +83,7 @@ export default class ProductDaoMongo {
                 })
             }
             return result  }
-        catch(err){console.log(err)}    
+        catch(err){logger.error(err)}    
     }
 
 }

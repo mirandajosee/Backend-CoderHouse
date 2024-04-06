@@ -31,7 +31,6 @@
     })
 
     socket.on('messageLogs', data => {
-        // console.log(data)
         let messageLogs = document.querySelector('#messageLogs')
         let mensajes = ''
         data.forEach(mensaje => {

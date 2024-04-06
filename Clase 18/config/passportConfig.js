@@ -4,6 +4,7 @@ import { Strategy as gitHubStrategy} from 'passport-github2'
 import { usersModel } from '../dao/models/user.model.js'
 import { cartsModel } from '../dao/models/carts.model.js'
 import { createHash, isValidPassword } from '../utils.js'
+import { logger } from '../logger/logger.js'
 
 
 export const initializePassport = () => {
@@ -29,6 +30,7 @@ export const initializePassport = () => {
             // done funciona como el next
             return done(null, result)
         } catch (error) {
+            logger.warning(error)
             return done(error)   
         }
 
@@ -40,12 +42,13 @@ export const initializePassport = () => {
         try {
             const user = await usersModel.findOne({email: username})
             if (!user) {
-                console.log('user no encontrado')
+                logger.warning('user no encontrado')
                 return done(null, false)
             }
             if (!isValidPassword(password, user.password)) return done(null, false)
             return done(null, user)
         } catch (error) {
+            logger.warning(error)
             return done(error)
         }
     }))
@@ -73,6 +76,7 @@ export const initializePassport = () => {
                 
                 return done(null, user)
         } catch (error) {
+            logger.warning(error)
             done(error)
         }
     }))

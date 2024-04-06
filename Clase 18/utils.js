@@ -5,6 +5,7 @@ import { Command } from "commander";
 import { default as nodemailer } from "nodemailer"
 import { default as twilio } from "twilio";
 import { config as dotenvConfig } from "dotenv"
+import { logger } from "./logger/logger";
 
 
 const __filename = fileURLToPath(import.meta.url)
@@ -58,7 +59,7 @@ export const sendMail = async(to, subject, html)=> {try
     subject ,
     html
 })}
-catch(err){console.log(err)}}
+catch(err){logger.error(err)}}
 
 const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN)
 

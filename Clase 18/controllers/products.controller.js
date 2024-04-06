@@ -1,5 +1,6 @@
 import { productService } from "../repositories/services.js"
 import {faker} from '@faker-js/faker'
+import { logger } from "../logger/logger.js"
 
 const generateProducts = () => {
     return {
@@ -31,7 +32,7 @@ export class ProductController{
         }
         catch (err){
             res.status(400)
-            console.log(err)
+            logger.error(err)
         }}
         
     getProduct = async(req,res) =>{
@@ -41,7 +42,7 @@ export class ProductController{
     producto? res.json(producto) : res.status(404).send('<h1>Error 404: El producto no existe</h1>')
     }
     catch(err){
-        console.log(err)
+        logger.error(err)
     }
     }
 
@@ -51,7 +52,7 @@ export class ProductController{
         res.json(products)
         }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
         }
 
@@ -69,7 +70,7 @@ export class ProductController{
         const result = productService.addProduct(newProduct)
         res.json(result)}
         catch (err){
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -89,7 +90,7 @@ export class ProductController{
             res.status(200).send(result)
         }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -100,7 +101,7 @@ export class ProductController{
             res.json(result)
         }
             catch(err){
-                    console.log(err)
+                    logger.error(err)
                 }
     
     }
@@ -124,7 +125,7 @@ export class ProductController{
             res.send(products)
         }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 

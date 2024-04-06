@@ -2,6 +2,8 @@ import express from "express"
 import { messagesModel } from "../dao/models/messages.model.js";
 import { productService,cartService } from "../repositories/services.js";
 import { CustomError } from "../errors/CustomError.js";
+import { logger } from "../logger/logger.js";
+
 const viewsRouter = express.Router();
 
 
@@ -22,7 +24,7 @@ viewsRouter.get('/realtimeproducts', async(req, res) => {
         res.render('realtimeproducts', { products })
         }
     catch(err){
-            console.log(err)
+            logger.error(err)
         }
     })
 
@@ -32,7 +34,7 @@ viewsRouter.get('/chat', async(req, res) => {
     const role=req.session.user.role
     res.render('chat', { chat,role})}
     catch(err){
-        console.log(err)
+        logger.error(err)
     }
 }); 
 
@@ -59,7 +61,7 @@ viewsRouter.get('/products',async (req,res)=>{
             user})
     }
     catch(err){
-        console.log(err)
+        logger.error(err)
     }
 });
 
@@ -79,7 +81,7 @@ viewsRouter.get('/carts/:cid', async(req, res) => {
     }
     res.render('cart', { cart})}
     catch(err){
-        console.log(err)
+        logger.error(err)
     }
 }); 
 

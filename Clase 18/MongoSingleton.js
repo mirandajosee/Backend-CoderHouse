@@ -1,6 +1,7 @@
 import { connect,set } from 'mongoose'
 import  {env} from "./utils.js"
 import { config as dotenvConfig } from "dotenv"
+import { logger } from './logger/logger.js'
 
 switch(env){
     case "PROD": 
@@ -24,13 +25,13 @@ export class MongoSingleton {
             useNewUrlParser: true,
             useUnifiedTopology: true
         })
-        // .then(() => console.log('conectado a la base de datos'))
+        // .then(() => logger.debug('conectado a la base de datos'))
         .catch(err => logger.error(err))
     }
 
     static getInstance(){
         if (this.#instance) {
-            console.log("Conectando a base de datos")
+            logger.debug("Conectando a base de datos")
             return this.#instance
         }
 

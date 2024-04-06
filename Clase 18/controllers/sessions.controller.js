@@ -1,10 +1,14 @@
 import { UserDTO } from "../dto/user.dto.js"
+import { logger } from "../logger/logger.js"
 
 export class SessionController{
     constructor(){}
 
     emailLogin=async (req, res)=>{
-        if (!req.user) {return res.status(401).redirect("/login")}
+        if (!req.user) {
+            logger.warning("Login incorrecto")
+            return res.status(401).redirect("/login")
+        }
         req.session.user = new UserDTO(req.user)
         res.status(200).redirect("/products")
     }
@@ -23,7 +27,7 @@ export class SessionController{
         res.status(200).redirect("/login")}
 
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -34,7 +38,7 @@ export class SessionController{
         })
         res.status(200).redirect('/login')}
         catch(err)
-        {console.log(err)}
+        {logger.error(err)}
     }
 
     current=async (req, res)=>{
@@ -42,7 +46,7 @@ export class SessionController{
             req.session.user? res.json(req.session.user):res.send("No hay usuario actualmente")
         }
         catch(err){
-            console.log(err)
+            logger.error(err)
         }
     }
 }

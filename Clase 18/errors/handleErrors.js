@@ -1,7 +1,8 @@
 import { EnumErrors } from "./EnumErrors.js";
+import { logger } from "../logger/logger.js";
 
 export const handleErrors = (error, req, res, next) => {
-    console.log(error)
+    logger.error(error.message)
 
     switch (error.code) {
         case EnumErrors.INVALID_TYPES_ERROR:

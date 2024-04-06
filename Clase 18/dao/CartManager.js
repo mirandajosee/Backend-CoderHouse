@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import { CustomError } from "../errors/CustomError"
+import { logger } from "../logger/logger.js"
 
 export default class CartManager {
     constructor() {
@@ -19,7 +20,7 @@ export default class CartManager {
         }
         this.carts.push(newCart)
         this.saveCartsToFile()
-        console.log('carrito creado')
+        logger.debug('carrito creado')
         return newCart
     }
 
@@ -71,7 +72,7 @@ export default class CartManager {
     get() {
         try {
             const data = fs.readFileSync(this.path, 'utf-8')
-            console.log(data)
+            logger.debug(data)
             this.carts = JSON.parse(data) || []
         } catch (error) {
             this.carts = [];
