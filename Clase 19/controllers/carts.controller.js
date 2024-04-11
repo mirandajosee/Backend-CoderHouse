@@ -1,5 +1,5 @@
 import { CommandInstance } from "twilio/lib/rest/preview/wireless/command.js"
-import { cartService } from "../repositories/services.js"
+import { cartService, productService } from "../repositories/services.js"
 import { sendMail } from "../utils.js"
 import { logger } from "../logger/logger.js"
 
@@ -26,7 +26,7 @@ export class CartController{
     }
     createCart= async(req, res) => {
         try{
-            const newCart = cartService.createCart()
+            const newCart = await cartService.createCart(email=req.session.user.email)
             res.json(newCart)
             }
         catch(err){
@@ -45,7 +45,7 @@ export class CartController{
                     message:`Dato faltante o de tipo incorrecto\n Se recibió cid=${typeof(cid)},newCart=${typeof(newCart)}`
                 })
             }
-            const result= cartService.updateCart(cid,newCart)
+            const result= await cartService.updateCart(cid,newCart)
             res.json(result)
             }
         catch(err){
@@ -63,7 +63,7 @@ export class CartController{
                     message:`Dato faltante o de tipo incorrecto\n Se recibió cid=${typeof(cid)}`
                 })
             }
-            newCart = cartService.delete(cid)
+            newCart = await cartService.delete(cid)
             res.json(newCart)
             return logger.info("Carrito vacío exitosamente")
             }
@@ -87,7 +87,25 @@ export class CartController{
                     message:`Dato faltante o de tipo incorrecto\n Se recibió cartId=${typeof(cartId)},productId=${typeof(productId)}}`
                 })
             }
-            result= cartService.addProductToCart(cartId, productId)
+            const product = await productService.getProductById(productId)
+            if (!product){
+                CustomError.createError({
+                    name:"Product not found",
+                    cause:"This product does not exist",
+                    code:"3",
+                    message:`El producto no se encontró en la base de datos actual\n Se recibió pid=${productId}`
+                })
+            }
+            if ((req.session.user.email == product.owner) && req.session.user.role!="admin"){
+                CustomError.createError({
+                    name:"Cannot add to Cart",
+                    cause:"Invalid user",
+                    code:"2",
+                    message:`No puede comprar sus propios productos\n Se recibió email=${req.session.user.email}`
+                })
+            }
+            const result= await cartService.addProductToCart(cartId, productId)
+            
             res.json(result)
         }
         catch(err){
@@ -107,7 +125,7 @@ export class CartController{
                     message:`Dato faltante o de tipo incorrecto\n Se recibió pid=${typeof(pid)},cid=${typeof(cid)},quantity=${typeof(quantity)}`
                 })
             }
-            result=cartService.updateProductToCart(cid,pid,quantity)
+            result= await cartService.updateProductToCart(cid,pid,quantity)
             res.json(result)
             }
         catch(err){
@@ -118,7 +136,7 @@ export class CartController{
     deleteProductFromCart=async(req, res) => {
         try{
             const {cid,pid} = req.params
-            const result = cartService.deleteItem(cid,pid)
+            const result = await cartService.deleteItem(cid,pid)
             res.send(result)
             }
         catch(err){

@@ -13,8 +13,8 @@ switch (mode) {
         const ProductDaoMongo = (await import('./mongoDao/product.mongo.js')).default
         ProductDao = ProductDaoMongo
 
-        //const UserDaoMongo = (await import('./mongoDao/session.mongo.js')).default
-        //UserDao = UserDaoMongo
+        const UserDaoMongo = (await import('./mongoDao/session.mongo.js')).default
+        UserDao = UserDaoMongo
 
         //const OrderDaoMongo = (await import('./mongoDao/ticket.mongo.js')).default
         //OrderDao = OrderDaoMongo
@@ -27,14 +27,14 @@ switch (mode) {
         dbConnection()
         ProductDao = (await import('./ProductManager.js')).default
         CartDao = (await import('./CartManager.js')).default
-        //UserDao = UserDaoMongo
+        UserDao = (await import('./mongoDao/session.mongo.js')).default
         //OrderDao = OrderDaoMongo
         break;
 
     default:
         dbConnection()
         ProductDao =  (await import('./mongoDao/product.mongo.js')).default
-        //UserDao = (await import('./mongoDao/session.mongo.js')).default
+        UserDao = (await import('./mongoDao/session.mongo.js')).default
         //OrderDao = (await import('./mongoDao/ticket.mongo.js')).default
         CartDao = (await import('./mongoDao/cart.mongo.js')).default
         break;

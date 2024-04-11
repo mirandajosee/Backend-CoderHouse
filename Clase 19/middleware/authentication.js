@@ -14,6 +14,9 @@ export function auth(req, res, next) {
 }
 
 export function allow(req,res,next,allowed){
+    if(!req.session.user){
+        res.redirect("/login")
+    }
     if(allowed.includes(req.session.user.role,0))
         {return next()}
     else {

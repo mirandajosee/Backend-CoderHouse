@@ -16,8 +16,8 @@ const {
 productRouter.get('/mockingproducts', mockingProducts)
 productRouter.get('/', getProducts)
 productRouter.get('/:pid', getProduct)
-productRouter.post('/',(req,res,next) => allow(req,res,next,["admin"]), createProduct)
-productRouter.put('/:pid',(req,res,next) => allow(req,res,next,["admin"]), updateProduct)
-productRouter.delete('/:pid',(req,res,next) => allow(req,res,next,["admin"]), deleteProduct)
+productRouter.post('/',(req,res,next) => allow(req,res,next,["admin","premium"]), createProduct)
+productRouter.put('/:pid',(req,res,next) => allow(req,res,next,["admin","premium"]), updateProduct)
+productRouter.delete('/:pid',(req,res,next) => allow(req,res,next,["admin","premium"]), deleteProduct)
 
 export {productRouter}

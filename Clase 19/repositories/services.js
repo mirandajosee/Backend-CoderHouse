@@ -7,10 +7,10 @@ const CartRepositories = (await import('../repositories/cart.repositories.js')).
 const productService = new ProductRepositories(new ProductDao())
 const cartService = new CartRepositories(new CartDao())
 //const ticketService = new TicketRepositories(new OrderDao())
-//const userService=new UserDao()
+const userService=new UserDao()
 
 export {
-    //userService,
+    userService,
     productService,
     cartService,
     //ticketService

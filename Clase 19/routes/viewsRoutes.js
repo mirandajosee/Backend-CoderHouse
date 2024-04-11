@@ -1,8 +1,9 @@
 import express from "express"
 import { messagesModel } from "../dao/models/messages.model.js";
-import { productService,cartService } from "../repositories/services.js";
+import { productService,cartService,userService } from "../repositories/services.js";
 import { CustomError } from "../errors/CustomError.js";
 import { logger } from "../logger/logger.js";
+import { checkToken } from "../utils.js";
 
 const viewsRouter = express.Router();
 
@@ -17,7 +18,7 @@ viewsRouter.get('/home', (req, res) => {
     res.render('test', { });
 });
 
-//Vista de real time products
+//Vista de real time products, agregar middleware
 viewsRouter.get('/realtimeproducts', async(req, res) => {
     try{
         const products = await productService.getProducts({})
@@ -83,7 +84,26 @@ viewsRouter.get('/carts/:cid', async(req, res) => {
     catch(err){
         logger.error(err)
     }
-}); 
+})
+
+viewsRouter.get("/passwordRecovery/:token", async(req, res) => {
+    try{
+        const token=req.params.token
+        const email = checkToken(token).user.email
+        const user = await userService.getByMail(email)
+        res.status(200).render("changePassword",{user:user})
+    }catch(err){
+        logger.error(err)
+        if (err.name="TokenExpiredError"){
+            res.redirect("/passwordRecovery")
+        }else{
+        logger.error(err)}
+    }
+})
+
+viewsRouter.get('/passwordRecovery', (req, res)=>{
+    res.status(200).render('passwordRecovery')
+})
 
 viewsRouter.get('/login', (req, res)=>{
     res.status(200).render('login')

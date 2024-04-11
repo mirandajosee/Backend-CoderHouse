@@ -5,7 +5,8 @@ import { Command } from "commander";
 import { default as nodemailer } from "nodemailer"
 import { default as twilio } from "twilio";
 import { config as dotenvConfig } from "dotenv"
-import { logger } from "./logger/logger";
+import { logger } from "./logger/logger.js";
+import { default as jwt } from "jsonwebtoken"
 
 
 const __filename = fileURLToPath(import.meta.url)
@@ -31,7 +32,6 @@ switch(env){
 }
 
 
-export const persistencia = "DB" //"FS" para FyleSystem
 
 export const createHash = password => hashSync(password, genSaltSync(10))
 
@@ -39,8 +39,8 @@ export const isValidPassword = (password, passwordUser) => {
     return compareSync(password, passwordUser)
 }
 
-
-
+export const generateToken = user => jwt.sign({user},"a",{expiresIn:"1h"})
+export const checkToken = token => jwt.verify(token,"a")
 
 
 const transport = nodemailer.createTransport({

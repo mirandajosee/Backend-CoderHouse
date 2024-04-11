@@ -1,4 +1,4 @@
-import { logger } from "../logger/logger"
+import { logger } from "../logger/logger.js"
 
 export default class CartRepositories { // UserServices
     constructor(dao){

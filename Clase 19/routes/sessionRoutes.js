@@ -9,7 +9,10 @@ const {
     githubRegister,
     emailRegister,
     logout,
-    current
+    current,
+    roleUpdate,
+    passwordRecovery,
+    updatePassword
 } = new SessionController()
 
 const sessionRouter = Router()
@@ -20,5 +23,7 @@ sessionRouter.get('/githubcallback', passport.authenticate('github', {failureRed
 sessionRouter.post('/register', passport.authenticate('register', {failureRedirect: '/register'}) ,emailRegister)
 sessionRouter.post('/logout', logout)
 sessionRouter.get("/current", current)
-
+sessionRouter.put("/premium/:uid", roleUpdate)
+sessionRouter.post("/passwordRecovery", passwordRecovery)
+sessionRouter.post("/updatePassword", updatePassword)
 export {sessionRouter}

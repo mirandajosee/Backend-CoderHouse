@@ -58,6 +58,7 @@ app.use(session({
     saveUninitialized: true
 }))
 app.use(addLogger)
+app.use(handleErrors)
 
 // Rutas para los productos
 app.use('/api/products/', productRouter)
@@ -69,6 +70,8 @@ app.use('/api/users/', sessionRouter)
 app.use('/',viewsRouter)
 //Ruta de pruebas
 app.use('/testing/',testingRouter)
+
+
 
 const httpServer= app.listen(PORT, ()=>{
     logger.debug(`Escuchando en el puerto ${PORT}`)
@@ -88,17 +91,6 @@ app.use(express.static(__dirname+'/public'))
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
-
-
-
-app.use('*', async (req, res)=>{
-    CustomError.createError({
-        name:"Routing error",
-        cause:"This path does not exist",
-        message:"This endpoint or file does not exist, check the grammar or the existance of the path",
-        code:EnumErrors.ROUTING_ERROR
-    })
-})
 
 
 io.on('connection', socket=> {
@@ -162,4 +154,13 @@ io.on('connection', socket=> {
     })
 })
 
-app.use(handleErrors)
+
+
+//app.use('*', async (req, res)=>{
+//    CustomError.createError({
+//        name:"Routing error",
+//        cause:"This path does not exist",
+//        message:"This endpoint or file does not exist, check the grammar or the existance of the path",
+//        code:EnumErrors.ROUTING_ERROR
+//    })
+//})
