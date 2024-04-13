@@ -20,6 +20,7 @@ import { CustomError } from "../errors/CustomError.js"
 import { EnumErrors } from "../errors/EnumErrors.js"
 import { handleErrors } from "../errors/handleErrors.js"
 import { addLogger,logger } from "../logger/logger.js"
+import { CartController } from "../controllers/carts.controller.js"
 
 
 switch(env){
@@ -114,9 +115,13 @@ io.on('connection', socket=> {
     // Escuchando deleteProducts
     socket.on('deleteProduct', async (productId) => {
         try{
+            const producto = await productService.getProductById(productId.id)
+            if (productId.owner=="admin" || productId.owner==producto.owner){
             await productService.deleteProduct(productId.id)
             const filteredList= await productService.getProducts()
-            io.emit('updateList', filteredList)}
+            io.emit('updateList', filteredList)}else{
+                logger.warning("Borrado no exitoso debido a permisos")
+            }}
         catch(err)
         {logger.error(err)}
     });
@@ -138,7 +143,7 @@ io.on('connection', socket=> {
             const cartId=data.cid
             const producto = await productService.getProductById(productId)
             if (producto){
-            cartService.addProductToCart(cartId,productId)
+            await cartService.addProductToCart(cartId,productId)
         }
             else{
                 CustomError.createError({

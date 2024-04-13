@@ -1,5 +1,5 @@
 import { CommandInstance } from "twilio/lib/rest/preview/wireless/command.js"
-import { cartService, productService } from "../repositories/services.js"
+import { cartService, productService, userService } from "../repositories/services.js"
 import { sendMail } from "../utils.js"
 import { logger } from "../logger/logger.js"
 
@@ -77,14 +77,14 @@ export class CartController{
             // para testear se puede usar 
             //let cid= "65ca2a74be97e0dca5dc3ac8"
             //let pid= "65bf2577eb4489fe2f045def"
-            let cartId = req.params.cid
+            let cartID = req.params.cid
             let productId = req.params.pid
-            if (!cartId || !productId ){
+            if (!cartID || !productId ){
                 CustomError.createError({
                     name:"Invalid or missing params",
                     cause:"Needed params were missing or had a wrong type",
                     code:"2",
-                    message:`Dato faltante o de tipo incorrecto\n Se recibió cartId=${typeof(cartId)},productId=${typeof(productId)}}`
+                    message:`Dato faltante o de tipo incorrecto\n Se recibió cartId=${typeof(cartID)},productId=${typeof(productId)}}`
                 })
             }
             const product = await productService.getProductById(productId)
@@ -104,7 +104,7 @@ export class CartController{
                     message:`No puede comprar sus propios productos\n Se recibió email=${req.session.user.email}`
                 })
             }
-            const result= await cartService.addProductToCart(cartId, productId)
+            const result= await cartService.addProductToCart(cartID, productId)
             
             res.json(result)
         }

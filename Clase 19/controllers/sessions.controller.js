@@ -59,11 +59,13 @@ export class SessionController{
             const user= await userService.getById(uid)
             if(user.role=="user"){
                 await userService.updateUser(uid,{role:"premium"})
+                res.status(200).send(`Tu nuevo rol es premium`)
             }
             if(user.role=="premium"){
                 await userService.updateUser(uid,{role:"user"})
+                res.status(200).send(`Tu nuevo rol es user`)
             }
-            res.status(200).send(`Tu nuevo rol es ${user.role}`)
+            
         }
         catch(err){
             logger.error(err)

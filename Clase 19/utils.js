@@ -39,8 +39,8 @@ export const isValidPassword = (password, passwordUser) => {
     return compareSync(password, passwordUser)
 }
 
-export const generateToken = user => jwt.sign({user},"a",{expiresIn:"1h"})
-export const checkToken = token => jwt.verify(token,"a")
+export const generateToken = user => jwt.sign({user},process.env.SESSION_SECRET,{expiresIn:"1h"})
+export const checkToken = token => jwt.verify(token,process.env.SESSION_SECRET)
 
 
 const transport = nodemailer.createTransport({

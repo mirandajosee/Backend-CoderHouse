@@ -7,9 +7,9 @@ export default class UserDaoMongo{
         this.User = usersModel
     }
 
-    async get(){
+    async get(by){
         try {
-            return await this.User.find({})
+            return await this.User.findOne({by}).lean()
             
         } catch (error) {
             return  logger.error(error)

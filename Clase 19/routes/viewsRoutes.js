@@ -22,7 +22,8 @@ viewsRouter.get('/home', (req, res) => {
 viewsRouter.get('/realtimeproducts', async(req, res) => {
     try{
         const products = await productService.getProducts({})
-        res.render('realtimeproducts', { products })
+        const owner = req.session.user.role=="admin"? "admin" : req.session.user.email
+        res.render('realtimeproducts', { products ,owner})
         }
     catch(err){
             logger.error(err)

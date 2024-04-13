@@ -64,7 +64,12 @@ export class ProductController{
 
     createProduct= async(req, res) => {
         try{
-        const newProduct = req.body
+        let newProduct = req.body
+        if (req.session.user.role="admin"){
+            newProduct = {...newProduct,owner:"admin"}
+        }else{
+            newProduct = {...newProduct,owner:req.session.user.email}
+        }
         if (!newProduct.title || !newProduct.code || !newProduct.description || !newProduct.price || !newProduct.stock ){
             CustomError.createError({
                 name:"Invalid or missing params",
@@ -73,7 +78,7 @@ export class ProductController{
                 message:`Dato faltante o de tipo incorrecto, ver formato correcto y corrregir, se recibió ${newProduct}`
             })
         }
-        const result = productService.addProduct(newProduct)
+        const result = await productService.addProduct(newProduct)
         res.json(result)}
         catch (err){
             logger.error(err)

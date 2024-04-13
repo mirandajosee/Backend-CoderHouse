@@ -143,10 +143,16 @@ export default class CartDaoMongo{
             const producto = await productsModel.findById({_id:productId}).lean()
             if (producto){
                 const newProd = {product: productId, quantity:1}
+                const user = await usersModel.findOne({cartID:cartId}).lean()
+                if (user.email == producto.owner){
+                logger.warning("No se puede agregar un producto propio al carrito")
+                return 
+                }else{
                 const newCart = await this.Cart.findOneAndUpdate({_id:cartId},{$addToSet:{products:newProd}},{new:true}).lean()
                 //res.send(newCart)
-                return newCart
+                return newCart}
             }
+            
             else{
                 CustomError.createError({
                     name:"Product not found",
