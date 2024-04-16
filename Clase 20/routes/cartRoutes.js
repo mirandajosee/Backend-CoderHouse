@@ -11,9 +11,11 @@ const {
     addProductToCart,
     updateProductToCart,
     deleteProductFromCart,
-    purchaseCart
+    purchaseCart,
+    getCarts
 } = new CartController()
 
+cartRouter.get('/', getCarts)
 cartRouter.post('/', createCart)
 cartRouter.get('/:cid', getCartById)
 cartRouter.put('/:cid', updateCart)

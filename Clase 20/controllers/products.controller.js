@@ -22,7 +22,7 @@ export class ProductController{
         try{
         const {limit=10,pageQuery=1,sort="default"}=req.query
         const config = {limit:limit,pageQuery:pageQuery,sort:sort}
-        const result = productService.getProducts(config)
+        const result = await productService.getProducts(config)
         if (sort=="default"){
             result.prevLink=result.hasPrevPage? req.protocol + '://' + req.get('host')+ "/Products?limit="+limit+"&page="+result.prevPage : result.hasPrevPage
             result.nextLink=result.hasNextPage? req.protocol + '://' + req.get('host') +"/Products?limit="+limit+"&page="+result.nextPage : result.hasNextPage}
@@ -39,7 +39,7 @@ export class ProductController{
     getProduct = async(req,res) =>{
     try{
     const pid = req.params.pid
-    const producto=productService.getProductById(pid)
+    const producto=await productService.getProductById(pid)
     producto? res.json(producto) : CustomError.createError({
         name:"Product not found",
         code:3,
@@ -54,7 +54,7 @@ export class ProductController{
 
     getProducts = async(req,res) =>{
         try{
-        const products=productService.getProducts()
+        const products=await productService.getProducts()
         res.json(products)
         }
         catch(err){
@@ -78,8 +78,8 @@ export class ProductController{
                 message:`Dato faltante o de tipo incorrecto, ver formato correcto y corrregir, se recibió ${newProduct}`
             })
         }
-        const result = await productService.addProduct(newProduct)
-        res.json(result)}
+        await productService.addProduct(newProduct)
+        res.json(newProduct)}
         catch (err){
             logger.error(err)
         }
@@ -97,9 +97,9 @@ export class ProductController{
                     message:`Dato faltante o de tipo incorrecto\n Se recibió id=${typeof(id)},updateProduct=${typeof(updatedProduct)}}`
                 })
             }
-            const product = await productService.getProductById(pid=id)
-            if (product.owner == req.user.email || req.user.role=="admin"){
-                const result = await productService.updateProduct(id=id,update=updatedProduct)
+            const product = await productService.getProductById(id)
+            if (product.owner == req.session.user.email || req.session.user.role=="admin"){
+                const result = await productService.updateProduct(id,updatedProduct)
                 res.status(200).send(result)
             }
             CustomError.createError({
@@ -118,8 +118,8 @@ export class ProductController{
     deleteProduct= async(req, res) => {
         try{
             const id = req.params.pid
-            const product = await productService.getProductById(pid=id)
-            if (product.owner == req.user.email || req.user.role=="admin"){
+            const product = await productService.getProductById(id)
+            if (product.owner == req.session.user.email || req.session.user.role=="admin"){
                 const result = await productService.deleteProduct(id)
                 res.status(200).send(result)
             }
@@ -139,7 +139,7 @@ export class ProductController{
     mockingProducts = async (req,res) =>
     {
         try{
-            const {quantity=100}=parseInt(req.query)
+            const quantity=parseInt(req.query.quantity) || 100
             let products = []
             if (!quantity ){
                 CustomError.createError({

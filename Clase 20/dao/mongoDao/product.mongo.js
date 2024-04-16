@@ -35,7 +35,7 @@ export default class ProductDaoMongo {
     }
     async getProductById(pid){
         try{
-            const result=await this.product.findById(pid).lean()
+            const result=await this.product.findOne({_id:pid}).lean()
             if (!result){
                 CustomError.createError({
                     name:"Product not found",
@@ -58,7 +58,7 @@ export default class ProductDaoMongo {
 
     async updateProduct(pid, updateProduct){
         try    {
-            const result=await this.product.findByIdAndUpdate({_id: pid}, updateProduct, {new: true}).lean()
+            const result=await this.product.findOneAndUpdate({_id: pid}, updateProduct, {new: true,lean: true})
             if (!result){
                 CustomError.createError({
                     name:"Product not found",
@@ -73,7 +73,7 @@ export default class ProductDaoMongo {
 
     async deleteProduct(pid){       
         try{
-            const result=await this.product.findByIdAndUpdate(pid, { status: false }, {new: true}).lean()
+            const result=await this.product.findOneAndUpdate({_id:pid}, { status: false }, {new: true,lean:true})
             if (!result){
                 CustomError.createError({
                     name:"Product not found",

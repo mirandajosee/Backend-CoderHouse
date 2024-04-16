@@ -1,4 +1,3 @@
-import { CommandInstance } from "twilio/lib/rest/preview/wireless/command.js"
 import { cartService, productService, userService } from "../repositories/services.js"
 import { sendMail } from "../utils.js"
 import { logger } from "../logger/logger.js"
@@ -6,6 +5,14 @@ import { logger } from "../logger/logger.js"
 export class CartController{
     constructor(){}
 
+    getCarts = async(req,res)=>{
+        try{
+            const result = await cartService.getCarts()
+            res.status(200).send(result)
+        }catch(err){
+            logger.error(err)
+        }
+    }
     getCartById= async(req, res) => {
         try{
         let cartId = req.params.cid
@@ -26,8 +33,8 @@ export class CartController{
     }
     createCart= async(req, res) => {
         try{
-            const newCart = await cartService.createCart(email=req.session.user.email)
-            res.json(newCart)
+            await cartService.createCart()
+            res.json("Carrito creado con éxito")
             }
         catch(err){
             logger.error(err)
@@ -63,7 +70,7 @@ export class CartController{
                     message:`Dato faltante o de tipo incorrecto\n Se recibió cid=${typeof(cid)}`
                 })
             }
-            newCart = await cartService.delete(cid)
+            const newCart = await cartService.delete(cid)
             res.json(newCart)
             return logger.info("Carrito vacío exitosamente")
             }
@@ -125,7 +132,7 @@ export class CartController{
                     message:`Dato faltante o de tipo incorrecto\n Se recibió pid=${typeof(pid)},cid=${typeof(cid)},quantity=${typeof(quantity)}`
                 })
             }
-            result= await cartService.updateProductToCart(cid,pid,quantity)
+            const result= await cartService.updateProductToCart(cid,pid,quantity)
             res.json(result)
             }
         catch(err){
@@ -136,7 +143,7 @@ export class CartController{
     deleteProductFromCart=async(req, res) => {
         try{
             const {cid,pid} = req.params
-            const result = await cartService.deleteItem(cid,pid)
+            const result = await cartService.deleteProductFromCart(cid,pid)
             res.send(result)
             }
         catch(err){

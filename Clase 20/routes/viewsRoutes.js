@@ -81,6 +81,10 @@ viewsRouter.get('/carts/:cid', async(req, res) => {
             message:`El carrito ${cid} no existe o no se encuentra en la base de datos actual`
         })
     }
+    if (cid!=req.session.user.cartID){
+        logger.warning("No puedes ver un carrito ajeno")
+        res.status(401).send("No puedes ver un carrito ajeno")
+    }
     res.render('cart', { cart})}
     catch(err){
         logger.error(err)

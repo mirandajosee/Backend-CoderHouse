@@ -17,10 +17,10 @@ import { initializePassport } from "../config/passportConfig.js"
 import { default as MongoStore } from "connect-mongo"
 import { config as dotenvConfig } from "dotenv"
 import { CustomError } from "../errors/CustomError.js"
-import { EnumErrors } from "../errors/EnumErrors.js"
 import { handleErrors } from "../errors/handleErrors.js"
 import { addLogger,logger } from "../logger/logger.js"
-import { CartController } from "../controllers/carts.controller.js"
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUiExpress from 'swagger-ui-express'
 
 
 switch(env){
@@ -60,6 +60,21 @@ app.use(session({
 }))
 app.use(addLogger)
 app.use(handleErrors)
+
+// swagger
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Backend de Mirai Ecommerce',
+            description: 'Documentación del proyecto de Backend para Coderhouse'
+        },
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+  }
+  
+  const specs = swaggerJSDoc(swaggerOptions)
+  app.use('/apidocs',swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 // Rutas para los productos
 app.use('/api/products/', productRouter)

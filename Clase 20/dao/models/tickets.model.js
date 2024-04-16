@@ -4,6 +4,16 @@ import { createHash } from "../../utils.js";
 const ticketsCollection="tickets"
 const ticketsSchema = new mongoose.Schema({
     amount: Number,
+    products: {
+        type: [{
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'products'
+            },
+            quantity: Number,
+            _id:false
+        }]
+    },
     purchaser:{
         type:String,
         require:true,

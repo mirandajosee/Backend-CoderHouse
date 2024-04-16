@@ -21,3 +21,65 @@ error: undefined
 error: undefined
 error: undefined
 error: undefined
+error: undefined {"code":11000,"index":0,"keyPattern":{"title":1},"keyValue":{"title":"Producto de prueba"}}
+error: undefined
+error: undefined
+error: Expected property name or '}' in JSON at position 4 (line 2 column 3)
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined {"$clusterTime":{"clusterTime":{"$timestamp":"7357916407029301255"},"signature":{"hash":"BAy2kBwMtSj0iISbduhEnxAxiI4=","keyId":{"high":1701194829,"low":3,"unsigned":false}}},"code":11000,"codeName":"DuplicateKey","keyPattern":{"title":1},"keyValue":{"title":"Tabla de asado"},"ok":0,"operationTime":{"$timestamp":"7357916407029301253"}}
+error: undefined
+error: undefined {"$clusterTime":{"clusterTime":{"$timestamp":"7357916561648123919"},"signature":{"hash":"qh9nsSBgafLfgkXXhHI6vlPqhY8=","keyId":{"high":1701194829,"low":3,"unsigned":false}}},"code":11000,"codeName":"DuplicateKey","keyPattern":{"title":1},"keyValue":{"title":"Tabla de asado"},"ok":0,"operationTime":{"$timestamp":"7357916561648123917"}}
+error: undefined
+error: undefined {"$clusterTime":{"clusterTime":{"$timestamp":"7357918932470071305"},"signature":{"hash":"fnWObTvguctrf1YsbkvPYWbOOpc=","keyId":{"high":1701194829,"low":3,"unsigned":false}}},"code":11000,"codeName":"DuplicateKey","keyPattern":{"title":1},"keyValue":{"title":"Tabla de asado"},"ok":0,"operationTime":{"$timestamp":"7357918932470071303"}}
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: Error adding product to cartMongooseError: Invalid update pipeline operator: "_id"
+error: undefined
+error: Error adding product to cartMongooseError: Invalid update pipeline operator: "_id"
+error: undefined
+error: undefined
+error: undefined
+error: Error deleting cartReferenceError: res is not defined
+error: undefined
+error: Error deleting cartReferenceError: res is not defined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined

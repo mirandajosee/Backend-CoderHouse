@@ -13,7 +13,7 @@ export default class CartDaoMongo{
 
     async get(){
         try {
-            return await this.Cart.find({})
+            return await this.Cart.find({}).lean()
             
         } catch (error) {
             return  logger.error(error)
@@ -39,7 +39,7 @@ export default class CartDaoMongo{
 
     async updateCart(cid,newCart){        
         try {
-            const updatedCart = await this.Cart.findOneAndUpdate({_id:cid},newCart,{new:true}).lean()
+            const updatedCart = await this.Cart.findOneAndUpdate({_id:cid},{ $set: { products: newCart } },{new:true}).lean()
             return updatedCart
         } catch (error) {
             return logger.error('Error adding product to cart'+error)
@@ -50,7 +50,7 @@ export default class CartDaoMongo{
     // Delete api/carts/:cid/products/:pid
     async deleteItem(cid, pid){
         try {
-            const cart = await this.Cart.findById({_id: cid}).lean()
+            const cart = await this.Cart.findOne({_id: cid}).lean()
             if (!cart||cid.length<24){
                 CustomError.createError({
                     name:"Cart not found",
@@ -60,9 +60,10 @@ export default class CartDaoMongo{
                 })
             }
             const productoId = cart.products.findIndex(prod => prod.product._id==pid)
+            console.log(productoId)
                 if (productoId!=-1){
                     cart.products.splice(productoId,1)
-                    const newCart = await this.Cart.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
+                    const newCart = await this.Cart.findOneAndUpdate({_id:cid},{ $set: { products: cart.products } },{new:true}).lean()
                     logger.info("Elemento borrado exitosamente")
                     return newCart
                 } else {
@@ -90,11 +91,12 @@ export default class CartDaoMongo{
                     message:`El carrito ${cid} no existe o no se encuentra en la base de datos actual`
                 })
             }
-            return await this.Cart.findOneAndUpdate(
+            const result= await this.Cart.findOneAndUpdate(
                 { _id: cid },
                 { $set: { products: [] } },
                 { new: true }
-            )
+            ).lean()
+            return result
         } catch (error) {
             return logger.error('Error deleting cart'+ error)
         }
@@ -116,7 +118,8 @@ export default class CartDaoMongo{
         newCart[productoId].quantity=quantity
         cart.products=newCart
         const result = await this.Cart.findOneAndUpdate({_id:cid},cart,{new:true}).lean()
-        res.json(result)
+        //res.status(200).json(result)
+        return result
         } 
         else {
             CustomError.createError({
@@ -126,12 +129,12 @@ export default class CartDaoMongo{
                 message:`El producto ${pid} no existe o no se encuentra en la base de datos actual`
             })
         }}catch(error)
-        {return logger.error('Error deleting cart'+ error)}
+        {logger.error('Error updating cart'+ error)}
     }
     
     async addProductToCart(cartId,productId){
         try{
-            const cart = await this.Cart.findById({_id: cartId}).lean()
+            const cart = await this.Cart.findOne({_id: cartId}).lean()
             if (!cart || cartId.length<24){
                 CustomError.createError({
                     name:"Cart not found",
@@ -140,7 +143,7 @@ export default class CartDaoMongo{
                     message:`El carrito ${cartId} no existe o no se encuentra en la base de datos actual`
                 })
             }
-            const producto = await productsModel.findById({_id:productId}).lean()
+            const producto = await productsModel.findOne({_id:productId}).lean()
             if (producto){
                 const newProd = {product: productId, quantity:1}
                 const user = await usersModel.findOne({cartID:cartId}).lean()
@@ -190,9 +193,11 @@ export default class CartDaoMongo{
             const products= (await this.Cart.findOne({_id:cid}).lean()).products
             let amount=0
             let newCart=[]
+            let purchasedCart=[]
             products.forEach(async (prod)=> 
             {
                 if(prod.product.stock>=prod.quantity){
+                    purchasedCart.push(prod)
                     amount+=prod.product.price * prod.quantity
                     await productsModel.findOneAndUpdate(
                         { _id: prod.product._id },
@@ -210,7 +215,7 @@ export default class CartDaoMongo{
                 { new: true }
             )
 
-            await ticketsModel.create({purchaser:email,amount:amount})
+            await ticketsModel.create({purchaser:email,amount:amount,products:purchasedCart})
             const ticket = await ticketsModel.findOne({purchaser:email,amount:amount},{},{sort:{'purchase_datetime':-1}}).lean()
             return ticket
             
