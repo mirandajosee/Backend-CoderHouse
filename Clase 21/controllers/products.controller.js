@@ -32,6 +32,7 @@ export class ProductController{
         res.status(200).json(result)
         }
         catch (err){
+            logger.info("error de controller")
             res.status(400)
             logger.error(err)
         }}
@@ -48,6 +49,7 @@ export class ProductController{
     })
     }
     catch(err){
+        logger.info("error de controller")
         logger.error(err)
     }
     }
@@ -58,6 +60,7 @@ export class ProductController{
         res.json(products)
         }
         catch(err){
+            logger.info("error de controller")
             logger.error(err)
         }
         }
@@ -65,10 +68,10 @@ export class ProductController{
     createProduct= async(req, res) => {
         try{
         let newProduct = req.body
-        if (req.session.user.role="admin"){
-            newProduct = {...newProduct,owner:"admin"}
+        if (req.session.user.role=="admin"){
+            newProduct.owner="admin"
         }else{
-            newProduct = {...newProduct,owner:req.session.user.email}
+            newProduct.owner=req.session.user.email
         }
         if (!newProduct.title || !newProduct.code || !newProduct.description || !newProduct.price || !newProduct.stock ){
             CustomError.createError({
@@ -78,9 +81,10 @@ export class ProductController{
                 message:`Dato faltante o de tipo incorrecto, ver formato correcto y corrregir, se recibió ${newProduct}`
             })
         }
-        await productService.addProduct(newProduct)
-        res.json(newProduct)}
+        const result = await productService.addProduct(newProduct)
+        res.json(result)}
         catch (err){
+            logger.info("error de controller")
             logger.error(err)
         }
     }
@@ -101,16 +105,18 @@ export class ProductController{
             if (product.owner == req.session.user.email || req.session.user.role=="admin"){
                 const result = await productService.updateProduct(id,updatedProduct)
                 res.status(200).send(result)
+                return
             }
             CustomError.createError({
                 name:"Invalid or missing params",
                 cause:"Needed params were wrong",
                 code:"2",
-                message:`Dato incorrecto\n Se recibió user=${req.user.email},no puedes actualizar un producto que no es tuyo}`
+                message:`Dato incorrecto\n Se recibió user=${req.session.user.email},no puedes actualizar un producto que no es tuyo}`
             })
             
         }
         catch(err){
+            logger.info("error de controller")
             logger.error(err)
         }
     }
@@ -122,20 +128,22 @@ export class ProductController{
             if (product.owner == req.session.user.email || req.session.user.role=="admin"){
                 const result = await productService.deleteProduct(id)
                 res.status(200).send(result)
+                return
             }
             CustomError.createError({
                 name:"Invalid or missing params",
                 cause:"Needed params were wrong",
                 code:"2",
-                message:`Dato incorrecto\n Se recibió user=${req.user.email},no puedes borrar un product que no es tuyo}`
+                message:`Dato incorrecto\n Se recibió user=${req.session.user.email},no puedes borrar un product que no es tuyo}`
             })
         }
             catch(err){
-                    logger.error(err)
+                logger.info("error de controller")
+                logger.error(err)
                 }
     
     }
-
+    
     mockingProducts = async (req,res) =>
     {
         try{
@@ -155,6 +163,7 @@ export class ProductController{
             res.send(products)
         }
         catch(err){
+            logger.info("error de controller")
             logger.error(err)
         }
     }

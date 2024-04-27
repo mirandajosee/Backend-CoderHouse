@@ -21,4 +21,5 @@ export function allow(req,res,next,allowed){
         {return next()}
     else {
     return res.status(401).send('error de autorización')}
+
 }

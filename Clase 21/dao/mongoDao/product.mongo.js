@@ -25,12 +25,16 @@ export default class ProductDaoMongo {
         result.status="success"
         result.payload=result.docs
         return await result}
-        catch(err) {logger.error(err)}                          
+        catch(err) {
+            logger.info("error de DAO")
+            logger.error(err)}                          
     }
     async getProducts(config){       
         try {
         return await this.product.find({status:true}).lean()}
-        catch(err){logger.error(err)}
+        catch(err){
+            logger.info("error de DAO")
+            logger.error(err)}
         
     }
     async getProductById(pid){
@@ -45,14 +49,19 @@ export default class ProductDaoMongo {
                 })
             }
             return result }   
-        catch(err) {logger.error(err)}
+        catch(err) {
+            logger.info("error de DAO")
+            logger.error(err)}
     }
 
 
     async addProduct(newProduct){       
         try {
         return await this.product.create(newProduct)}
-        catch(err){logger.error(err)}
+        catch(err){
+            logger.info("error de DAO")
+            logger.error(err)
+        }
         
     }
 
@@ -68,7 +77,10 @@ export default class ProductDaoMongo {
                 })
             }
             return result}
-        catch(err){logger.error(err)}
+        catch(err){
+            logger.info("error de DAO")
+            logger.error(err)
+        }
     }
 
     async deleteProduct(pid){       
@@ -86,4 +98,6 @@ export default class ProductDaoMongo {
         catch(err){logger.error(err)}    
     }
 
+    
+    
 }

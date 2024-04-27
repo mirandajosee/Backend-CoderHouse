@@ -98,7 +98,6 @@ export class SessionController{
     updatePassword=async (req, res)=>{
         try{
             const uid = req.query.uid
-            console.log(uid)
             const newPassword = req.body.password
             //const user= await userService.getById(uid)
             await userService.updateUser(uid,{password:createHash(newPassword)})

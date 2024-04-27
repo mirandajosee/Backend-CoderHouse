@@ -60,7 +60,6 @@ export default class CartDaoMongo{
                 })
             }
             const productoId = cart.products.findIndex(prod => prod.product._id==pid)
-            console.log(productoId)
                 if (productoId!=-1){
                     cart.products.splice(productoId,1)
                     const newCart = await this.Cart.findOneAndUpdate({_id:cid},{ $set: { products: cart.products } },{new:true}).lean()

@@ -40,7 +40,7 @@ export const initializePassport = () => {
         usernameField: 'email'
     }, async (username, password, done) => {
         try {
-            const user = await usersModel.findOne({email: username})
+            const user = await usersModel.findOne({email: username}).lean()
             if (!user) {
                 logger.warning('user no encontrado')
                 return done(null, false)

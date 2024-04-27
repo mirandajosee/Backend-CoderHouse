@@ -25,7 +25,7 @@ export class CartController{
             })
         }
         const cart = await cartService.getCartById(cartId)
-        cart? res.json(cart.products) : res.status(404).json({ error: 'Carrito no encontrado' })
+        cart? res.json(cart) : res.status(404).json({ error: 'Carrito no encontrado' })
         
         }catch(err){
             logger.error(err)
