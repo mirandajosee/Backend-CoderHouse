@@ -98,7 +98,6 @@ viewsRouter.get("/passwordRecovery/:token", async(req, res) => {
         const user = await userService.getByMail(email)
         res.status(200).render("changePassword",{user:user})
     }catch(err){
-        logger.error(err)
         if (err.name="TokenExpiredError"){
             res.redirect("/passwordRecovery")
         }else{
@@ -116,6 +115,16 @@ viewsRouter.get('/login', (req, res)=>{
 
 viewsRouter.get('/register', (req, res)=>{
     res.status(200).render('register')
+})
+
+viewsRouter.get('/:uid/documents', async (req, res)=>{
+    try{
+    const uid=req.params.uid
+    const user = await userService.getById(uid)
+    res.status(200).render('documents',{user:user})}
+    catch(err){
+        logger.error(err)
+    }
 })
 
 export {viewsRouter}

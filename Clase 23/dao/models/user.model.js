@@ -13,6 +13,14 @@ const usersSchema = new mongoose.Schema({
         enum:["user","admin","premium"],
         default:"user",
     },
+    documents:{
+        type:[{
+            name:String,
+            reference:String,
+            _id:false}
+        ]
+    },
+    last_connection:Date,
     age:Number,
     cartID: {
         type:mongoose.Schema.Types.ObjectId,

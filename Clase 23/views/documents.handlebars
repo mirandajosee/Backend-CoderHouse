@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents</title>
+</head>
+<body>
+    <div>
+    <p>Ingrese los documentos que necesite subir</p>
+    <form  action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data" class="form-group w-50">       
+        <label class="form-label">Foto de perfil</label>
+        <input type="file" name="profile" accept="image/*" class="form-control"><br/>
+        <label class="form-label">Foto de producto</label>
+        <input type="file" name="product" accept="image/*" multiple class="form-control"><br/>
+        <label class="form-label">Documentación</label>
+        <input type="file" name="document" multiple class="form-control"><br/>
+        <input type="submit" >
+    </form>
+    </div></br>
+
+    <p>¿Te interesa pasar a premium? Subí los siguientes documentos</p>
+    <form  action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data" class="form-group w-50">       
+        <label class="form-label">Identificación</label>
+        <input type="file" name="identity" class="form-control"><br/>
+        <label class="form-label">Comprobante de domicilio</label>
+        <input type="file" name="address" class="form-control"><br/>
+        <label class="form-label">Comprobante de estado de cuenta</label>
+        <input type="file" name="account" class="form-control"><br/>
+        <input type="submit" >
+    </form>
+    <p>Nota: También podes subirlos en documentación, tienen que tener "identificacion", "certificadoDomicilio" y "estadoCuenta" de nombre respectivamente para ser considerado</p>
+    </div>
+
+    <div>
+    {{#if user.documents}}
+    <p>{{user.name}}, tu rol es {{user.role}} y estos son tus documentos</p>
+        {{#each user.documents}}
+                    <p>Nombre: {{this.name}}</p>
+        {{/each}}
+    {{/if }}
+    
+    <form action="/api/users/logout" method="post">
+        <input type="submit" value="Cerrar sesión">
+    </form>
+    <form action="/products" method="get">
+        <input type="submit" value="Ir a la tienda">
+    </form>
+    </div>
+</body>
+</html>

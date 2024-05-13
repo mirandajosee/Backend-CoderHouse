@@ -49,7 +49,7 @@ export const logger = winston.createLogger({
             format: winston.format.simple()
         })
     ]
-})
+    })
 
 // middleware
 export const addLogger = (req, res, next) => {

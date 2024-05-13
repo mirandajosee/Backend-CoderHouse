@@ -1,7 +1,8 @@
-import { Router } from "express";
-import { auth } from "../middleware/authentication.js";
-import passport from "passport";
-import { SessionController } from "../controllers/sessions.controller.js";
+import { Router } from "express"
+import { auth } from "../middleware/authentication.js"
+import passport from "passport"
+import { SessionController } from "../controllers/sessions.controller.js"
+import upload from "../middleware/multerUpload.js"
 
 const {
     emailLogin,
@@ -12,9 +13,9 @@ const {
     current,
     roleUpdate,
     passwordRecovery,
-    updatePassword
+    updatePassword,
+    uploadDocuments
 } = new SessionController()
-
 const sessionRouter = Router()
 
 sessionRouter.post('/login',(req,res,next)=> auth(req,res,next),passport.authenticate('login', {failureRedirect: '/login'}), emailLogin)
@@ -26,4 +27,6 @@ sessionRouter.get("/current", current)
 sessionRouter.put("/premium/:uid", roleUpdate)
 sessionRouter.post("/passwordRecovery", passwordRecovery)
 sessionRouter.post("/updatePassword", updatePassword)
+sessionRouter.post("/:uid/documents",upload.any(), uploadDocuments)
+
 export {sessionRouter}

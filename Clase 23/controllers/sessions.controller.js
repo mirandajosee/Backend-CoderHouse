@@ -1,4 +1,3 @@
-import { Url } from "url"
 import { UserDTO } from "../dto/user.dto.js"
 import { logger } from "../logger/logger.js"
 import { userService } from "../repositories/services.js"
@@ -13,35 +12,41 @@ export class SessionController{
             return res.status(401).redirect("/login")
         }
         req.session.user = new UserDTO(req.user)
+        await userService.updateUser(req.session.user.id,{last_connection: (new Date(Date.now())).toUTCString()})
         res.status(200).redirect("/products")
     }
 
     githubLogin=async (req, res) => 
-    {req.session.user = new UserDTO(req.user)}
+    {req.session.user = new UserDTO(req.user)
+    await userService.updateUser(req.session.user.id,{last_connection: (new Date(Date.now())).toUTCString()})
+    }
 
     githubRegister=async (req, res) => {
         req.session.user = new UserDTO(req.user)
+        await userService.updateUser(req.session.user.id,{last_connection: (new Date(Date.now())).toUTCString()})
         res.redirect('/products')
     }
     emailRegister=async (req, res)=>{ 
         try{
-
         if (!req.user) return res.status(401).redirect("/register")
-        res.status(200).redirect("/login")}
+        res.status(200).redirect("/login")
+    }
 
         catch(err){
-            logger.error(err)
+            logger.error(err||err.message)
         }
     }
 
     logout=async (req, res)=>{
         try{
+        await userService.updateUser(req.session.user.id,{last_connection: (new Date(Date.now())).toUTCString()})
         req.session.destroy(err => {
             if(err) return res.send({status:'Logout error', message: err})           
         })
+        
         res.status(200).redirect('/login')}
         catch(err)
-        {logger.error(err)}
+        {logger.error(err||err.message)}
     }
 
     current=async (req, res)=>{
@@ -49,7 +54,7 @@ export class SessionController{
             req.session.user? res.json(req.session.user):res.send("No hay usuario actualmente")
         }
         catch(err){
-            logger.error(err)
+            logger.error(err||err.message)
         }
     }
 
@@ -58,8 +63,16 @@ export class SessionController{
             const uid = req.params.uid
             const user= await userService.getById(uid)
             if(user.role=="user"){
-                await userService.updateUser(uid,{role:"premium"})
-                res.status(200).send(`Tu nuevo rol es premium`)
+                const docs = await user.documents.map(doc => doc.name)
+                if (docs.find(doc =>doc.includes("identificacion"))  &&  
+                docs.find(doc =>doc.includes("certificadoDomicilio"))  &&  
+                docs.find(doc =>doc.includes("estadoCuenta"))){
+                    await userService.updateUser(uid,{role:"premium"})
+                    res.status(200).send(`Tu nuevo rol es premium`)}
+                else {
+                    res.status(401).send('Te faltan documentos para pasar a premium')
+                }
+
             }
             if(user.role=="premium"){
                 await userService.updateUser(uid,{role:"user"})
@@ -68,7 +81,7 @@ export class SessionController{
             
         }
         catch(err){
-            logger.error(err)
+            logger.error(err||err.message)
         }
     }
 
@@ -91,7 +104,7 @@ export class SessionController{
             }
         }
         catch(err){
-            logger.error(err)
+            logger.error(err||err.message)
         }
     }
 
@@ -104,7 +117,36 @@ export class SessionController{
             res.status(200).send("Contraseña actualizada")
         }
         catch(err){
-            logger.error(err)
+            logger.error(err||err.message)
+        }
+    }
+
+    uploadDocuments = async (req,res)=>{
+        try{
+            const uid = req.params.uid
+            const user = await userService.getById(uid)
+            user.documents= user.documents? user.documents : []
+            if (!user) {
+                return res.status(404).send('User not found')
+            }
+            if(!req.files){
+                return res.status(400).send({status:'error' , error:'No se pudo guardar el archivo'})
+            }
+
+            let documents = req.files
+            documents.forEach(doc => {
+                console.log(doc)
+                user.documents.push({
+                name: doc.filename,
+                reference: doc.path
+                })
+            })
+            await userService.updateUser(uid, user)
+            res.status(200).send('<h1>Archivos enviados correctamente</h1>')
+        }
+        catch(err){
+            console.log(err)
+            logger.error(err||err.message)
         }
     }
 }
