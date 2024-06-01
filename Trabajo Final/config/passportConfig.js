@@ -56,7 +56,7 @@ export const initializePassport = () => {
     passport.use('github', new gitHubStrategy({
         clientID:'Iv1.8f720753dc22e47d',
         clientSecret: '7ed060c74d23550378d2c7204eb41b8bb20ae06b',
-        callbackURL: 'https://backend-coderhouse-production-0a31.up.railway.app/api/users/githubcallback/api/users/githubcallback'
+        callbackURL: 'https://backend-coderhouse-production-0a31.up.railway.app/api/users/githubcallback'
     }, async (accessToken, refreshToken, profile, done)=>{
         try {
                 let user = await usersModel.findOne({email: profile._json.email})
