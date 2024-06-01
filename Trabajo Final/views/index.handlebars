@@ -27,6 +27,16 @@
     </div>
     <p>Bienvenido {{user.name}}, tu rol es {{user.role}}</p>
     {{/if }}
+    {{#unless user}}
+    <div class="form-group w-50" style="display:flex;flex-direction:row ;padding-inline:2%" >
+        <form action="/login" method="get">
+            <input type="submit" value="Iniciar sesión">
+        </form>
+        <form action="/register" method="get">
+            <input type="submit" value="Registrarse">
+        </form>
+    </div>
+    {{/unless}}
 
     <h1>Lista de productos</h1>
     <ul style="display:flex;flex-wrap:wrap;justify-content:center">
