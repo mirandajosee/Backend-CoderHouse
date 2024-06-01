@@ -1,26 +1,175 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu carrito</title>
-</head>
-<body>
-    <form action="/products" method="get" class="form-group w-50">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+
+<body style="background-color:rgb(170, 142, 228);color:honeydew;padding-inline:3%">
+    <div class="form-group w-50" style="display:flex;flex-direction:row ;padding-inline:2%;" >
+    <form action="/products" method="get">
         <input type="submit" value="Home">
     </form>
-    {{#if cart}}
-    <h1>Productos de tu carrito</h1>
-    <ul>
-        {{#each cart.products}}
-            <li>Nombre: {{this.product.title}} | Precio: {{this.product.price}}| Cantidad: {{this.quantity}}</li>
-        {{/each}}
-    </ul>
-    <form action="/api/carts/{{cart._id}}/purchase" method="post" class="form-group w-50">
-        <input type="submit" value="Comprar carrito">
+    <form action="/chat" method="get" >
+        <input type="submit" value="Chat">
     </form>
+    <form action="/api/users/logout" method="post">
+        <input type="submit" value="Cerrar sesión">
+    </form>
+    </div>
+    {{#if cart.products}}
+    <h1 style="text-align: center">Productos de tu carrito</h1>
+        {{#each cart.products}}
+        <div class="card" style="margin-bottom: 1%;flex-direction:row;align-items:center;padding:2%">
+            <p class="card-body">Nombre: {{this.product.title}} | Precio: ${{this.product.price}}| Cantidad: {{this.quantity}}</p>
+            <div style="display:flex;justify-content: space-evenly;align-items:center;">
+                <div style="flex-direction:row;align-items:center;justify-content:space-between; margin-right:5%" >
+                    <input id="{{this.product._id}}" type="Number" name="quantity" class="form-control" min="1" max="{{this.product.stock}}">
+                    <button onclick="updateQuantity(`{{this.product._id}}`)">Cambiar cantidad</button> 
+                </div>
+                <button onclick="deleteFromCart(`{{this.product._id}}`)">Eliminar de carrito</button>
+                <p id="p{{this.product._id}}" style="border-radius: 15%;background-color:indigo;color:yellowgreen;text-align:center;margin-top:5%;margin-left:15%;font-size:large;padding:2%"></p>
+            </div>
+        </div>
+        {{/each}}
+    <div style="justify-content:flex-end;display:flex">
+        <div class="card" style="margin-bottom: 1%;align-items:center;width:25%;margin-top:1%;background-color:indigo;color:yellowgreen">
+            <p class="card-body" style="text-align: center;font-size:x-large" id="total">Total</p>
+        </div>
+        <div style="display:flex;flex-direction: column;justify-content:center;margin-top:1%">
+            <button  id="checkout-btn" style="size: 15%;">Comprar carrito</button>
+            <div id="wallet_container"></div>
+            <button onclick="emptyCart()">Vaciar carrito</button>
+        </div>
+        
+    </div>
     {{else}}
-    <h1>Tu carrito esta vacío</h1>
+    <h1 style="text-align: center">Tu carrito esta vacío</h1>
     {{/if}}
 </body>
-</html>
+
+<script>
+    function updateQuantity(pid){
+        const quantity = document.getElementById(pid).value
+        fetch(`/api/carts/{{cart._id}}/products/${pid}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({quantity:quantity})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data._id){
+            Toastify({
+                    text: "Cantidad actualizada",
+                    duration: 3000,
+                    gravity: "top",
+                    position: 'right',
+                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                    stopOnFocus: true,
+                }).showToast()}
+            location.reload(true)        
+        })
+    }
+</script>
+<script>
+    function deleteFromCart(pid){
+        fetch(`/api/carts/{{cart._id}}/products/${pid}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data._id){
+            Toastify({
+                    text:'Producto eliminado de carrito',
+                    duration: 3000,
+                    gravity: "top",
+                    position: 'right',
+                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                    stopOnFocus: true,
+                }).showToast()}
+            location.reload(true)        
+        })
+    }
+</script>
+<script>
+    function emptyCart(){
+        fetch(`/api/carts/{{cart._id}}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data._id){
+            Toastify({
+                    text:'Carrito vaciado',
+                    duration: 3000,
+                    gravity: "top",
+                    position: 'right',
+                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                    stopOnFocus: true,
+                }).showToast()}
+            location.reload(true)        
+        })
+    }
+</script>
+
+<script>
+    {{#if cart.products}}
+    let subtotal = 0
+        {{#each cart.products}}
+        subtotal= {{this.product.price}}*{{this.quantity}}
+        document.getElementById(`p{{this.product._id}}`).innerText = "$"+subtotal
+         {{/each}}
+    {{/if}}
+</script>
+<script>
+    {{#if cart.products}}
+    let total = 0
+        {{#each cart.products}}
+        total+= {{this.product.price}}*{{this.quantity}}
+        {{/each}}
+    document.getElementById(`total`).innerText = "Total: $"+total
+    {{/if}}
+</script>
+
+<script>
+    const mp = new MercadoPago("TEST-881c3a21-747d-4885-9b05-fa8bea7901a2",{locale:"es-AR"})
+
+    document.getElementById("checkout-btn").addEventListener("click",async ()=>{
+        Toastify({
+                    text:'Aguarde un momento...',
+                    duration: 3000,
+                    gravity: "top",
+                    position: 'right',
+                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                    stopOnFocus: true,
+                }).showToast()
+        const response = await fetch(`/api/carts/{{cart._id}}/purchase`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+        })
+        const preference = await response.json()
+        createCheckoutButton(preference.id)})
+
+    const createCheckoutButton = (preferenceId) =>{
+            const bricksBuilder = mp.bricks()
+            const renderComponent = async () =>{
+                if(window.checkoutButton) window.checkoutButton.unmount()
+                await bricksBuilder.create("wallet","wallet_container",{
+                    initialization:{
+                        preferenceId: preferenceId
+                    }
+                })
+            }
+            renderComponent()
+        }
+    
+
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

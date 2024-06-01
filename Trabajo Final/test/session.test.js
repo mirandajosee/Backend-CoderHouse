@@ -4,7 +4,7 @@ import { dbConnection } from "../MongoSingleton.js"
 import { usersModel } from "../dao/models/user.model.js";
 
 
-const request = supertest.agent('http://localhost:8080');
+const request = supertest.agent('http://localhost:8080') //Se deja así pues sólo se usaría en desarrollo, no en productivo
 
 describe('API de session', () => {
 

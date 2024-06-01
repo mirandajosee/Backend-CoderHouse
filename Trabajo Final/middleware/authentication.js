@@ -5,7 +5,7 @@ export function auth(req, res, next) {
         email: 'adminCoder@coder.com',
         role:"admin",
         cartID:"65ca19112dc0eaafade1935e"}
-        return res.status(200).redirect("/products")
+        return res.status(200).redirect("/admin")
     }
     if (req.session?.email == 'adminCoder@coder.com' ||  !req.session?.role=="admin") {
         return res.status(401).send('error de autorización')

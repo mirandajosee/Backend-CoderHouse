@@ -1,40 +1,79 @@
-<center>
-<div>
-    <h1>Estás chateando con nuestro canal de soporte</h1>
-</div>
-<div>
-    
-    <input id="chatbox" type="text">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-</div>
-<div id="messageLogs">
-</center>
-</div>
+<body style="text-align:left; padding:1% 5%;background-color:rgb(170, 142, 228);color:honeydew">
+    {{#if user}}
+    <div class="form-group w-50" style="display:flex;flex-direction:row ;padding-inline:2%" >
+        <form action="/products" method="get">
+            <input type="submit" value="Home">
+        </form>
+        <form action="/carts/{{user.cartID}}" method="get">
+            <input type="submit" value="Carrito">
+        </form>
+        <form action="/api/users/logout" method="post">
+            <input type="submit" value="Cerrar sesión">
+        </form>
+
+        <form action="/{{user.id}}/documents" method="get">
+            <input type="submit" value="Subir archivos">
+        </form>
+    </div>
+    {{/if }}
+    {{#unless user}}
+    <div class="form-group w-50" style="display:flex;flex-direction:row ;padding-inline:2%" >
+        <form action="/products" method="get">
+            <input type="submit" value="Home">
+        </form>
+        <form action="/login" method="get">
+            <input type="submit" value="Iniciar sesión">
+        </form>
+    </div>
+    {{/unless}}
+
+    <div>
+        <h1  style="text-align:center;padding-bottom: 2%">Estás chateando con nuestro canal de soporte</h1>
+    </div>
+
+    <div id="messageLogs" >
+    </div>
+    <div>
+        <input id="chatbox" type="text" class="form-control" placeholder="Ingresa tu mensaje aquí">
+    </div>
+</body>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.all.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io() // config para poder usar socket del lado del cliente
     let email
-
+    {{#if user}}
+        email='{{user.email}}'
+    {{/if}}
+    {{#unless user}}
     Swal.fire({
         title: 'Identifícate',
         input: 'text',
         text: 'Ingresá el email para identificarte en el chat',
         inputValidator: value =>{
-            return !value && 'Necesitas ingresar el nombre de usuario para continuar..'
+            return !value && 'Necesitas ingresar email para continuar..'
         },
         allowOutsideClick: false
     }).then( result =>  {
         email=result.value
         //socket.emit('message', { email, message: `${email} acaba de iniciar sesión` })
     })
+    {{/unless}}
+    socket.emit('message', {email:email})
 
     socket.on('messageLogs', data => {
         let messageLogs = document.querySelector('#messageLogs')
         let mensajes = ''
         data.forEach(mensaje => {
-        mensajes += `<li>${mensaje.email}: ${mensaje.message}</li>` 
+        mensajes += `<li class="card">
+            <div class="card-body">
+            <div style="color:blue">${mensaje.email}:</div>
+            ${mensaje.message}
+            </div>
+        </li>` 
         })
         messageLogs.innerHTML = mensajes
     })
@@ -42,7 +81,7 @@
     // const chatbox = document.getElementById('chatbox')
     const chatbox = document.querySelector('#chatbox')
     chatbox.addEventListener('keyup', (evt)=>{
-        if(evt.key === 'Enter' && role==="user"){
+        if(evt.key === 'Enter' && '{{user.role}}'!="admin"){
             if(chatbox.value.trim().length > 0){
                 socket.emit('message', { email, message: chatbox.value })
                 chatbox.value = ''

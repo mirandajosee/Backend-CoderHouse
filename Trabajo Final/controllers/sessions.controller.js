@@ -13,7 +13,18 @@ export class SessionController{
         }
         req.session.user = new UserDTO(req.user)
         await userService.updateUser(req.session.user.id,{last_connection: (new Date(Date.now())).toUTCString()})
-        res.status(200).redirect("/products")
+        switch (req.session.user.role) {
+            case "premium":
+                res.status(200).redirect("/realtimeproducts")
+                break
+            case "admin":
+                res.status(200).redirect("/admin")
+                break
+            default:
+                res.status(200).redirect("/products")
+                break
+        }
+        
     }
 
     githubLogin=async (req, res) => 
@@ -39,7 +50,8 @@ export class SessionController{
 
     logout=async (req, res)=>{
         try{
-        await userService.updateUser(req.session.user.id,{last_connection: (new Date(Date.now())).toUTCString()})
+        if (req.session.user.role!="admin"){
+        await userService.updateUser(req.session.user.id,{last_connection: (new Date(Date.now())).toUTCString()})}
         req.session.destroy(err => {
             if(err) return res.send({status:'Logout error', message: err})           
         })
@@ -68,15 +80,15 @@ export class SessionController{
                 docs.find(doc =>doc.includes("certificadoDomicilio"))  &&  
                 docs.find(doc =>doc.includes("estadoCuenta"))){
                     await userService.updateUser(uid,{role:"premium"})
-                    res.status(200).send(`Tu nuevo rol es premium`)}
+                    res.status(200).send(`Rol actualizado a premium`)}
                 else {
-                    res.status(401).send('Te faltan documentos para pasar a premium')
+                    res.status(401).send('Faltan documentos para pasar a premium')
                 }
 
             }
             if(user.role=="premium"){
                 await userService.updateUser(uid,{role:"user"})
-                res.status(200).send(`Tu nuevo rol es user`)
+                res.status(200).send(`Rol actualizado a user`)
             }
             
         }
@@ -135,7 +147,6 @@ export class SessionController{
 
             let documents = req.files
             documents.forEach(doc => {
-                console.log(doc)
                 user.documents.push({
                 name: doc.filename,
                 reference: doc.path
@@ -145,8 +156,57 @@ export class SessionController{
             res.status(200).send('<h1>Archivos enviados correctamente</h1>')
         }
         catch(err){
-            console.log(err)
             logger.error(err||err.message)
         }
     }
+
+    getUsers=async (req, res)=>{
+        try{
+            //Pasar a DTO
+            const users= (await  userService.get()).map(user => new UserDTO(user))
+            res.status(200).send(users)
+        }
+        catch(err){
+            logger.error(err||err.message)
+        }
+    }
+
+    deleteUnactiveUsers=async (req, res)=>{
+        try{
+            const unactiveUsers= await userService.getUnactiveUsers(1000*60*60*24*2) //1000*60=1min 1min*60=1h 1h*24=1d
+            for (let user of unactiveUsers){
+                await sendMail(
+                    user.email,
+                    "Tu cuenta fue borrada por inactividad",
+                    `<h3>Hola ${user.firstName}<h3/><br/>
+                    <p>Hemos borrado tu cuenta debido a tu inactividad<p/><br/>
+                    <p>No te preocupes. Podes registrarte de nuevo y los datos de tus compras siguen intactos.<p/><br/>`
+                    )
+                await userService.deleteById(user._id)
+            }
+            res.status(200).send(unactiveUsers)
+        }
+        catch(err){
+            logger.error(err||err.message)
+        }
+    }
+
+    deleteUser=async (req, res)=>{
+        try{
+            const uid = req.params.uid
+            const user= await userService.deleteById(uid)
+            await sendMail(
+                    user.email,
+                    "Tu cuenta fue borrada",
+                    `<h3>Hola ${user.firstName}<h3/><br/>
+                    <p>Hemos borrado tu cuenta. Si crees que se trata de un error responde este mail<p/><br/>
+                    <p>No te preocupes. Podes registrarte de nuevo y los datos de tus compras siguen intactos.<p/><br/>`
+                    )
+            res.status(200).send(user)
+        }
+        catch(err){
+            logger.error(err||err.message)
+        }
+    }
+
 }

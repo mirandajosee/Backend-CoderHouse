@@ -14,7 +14,10 @@ const {
     roleUpdate,
     passwordRecovery,
     updatePassword,
-    uploadDocuments
+    uploadDocuments,
+    getUsers,
+    deleteUnactiveUsers,
+    deleteUser
 } = new SessionController()
 const sessionRouter = Router()
 
@@ -28,5 +31,8 @@ sessionRouter.put("/premium/:uid", roleUpdate)
 sessionRouter.post("/passwordRecovery", passwordRecovery)
 sessionRouter.post("/updatePassword", updatePassword)
 sessionRouter.post("/:uid/documents",upload.any(), uploadDocuments)
+sessionRouter.get("/",getUsers)
+sessionRouter.delete("/",deleteUnactiveUsers)
+sessionRouter.delete("/:uid",deleteUser)
 
 export {sessionRouter}

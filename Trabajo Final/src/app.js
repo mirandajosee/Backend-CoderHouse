@@ -1,3 +1,5 @@
+// Código realizado por José Miranda Valderrama en 2024 para el curso "Backend" de CoderHouse
+
 import express from "express"
 import { productRouter } from "../routes/productRoutes.js"
 import { cartRouter } from "../routes/cartRoutes.js"
@@ -144,9 +146,12 @@ io.on('connection', socket=> {
     socket.on('message' ,async(data) => {
         try{
         //mensajes.push(data)
+        if (data.message){
         await messagesModel.create(data)
+        }
         mensajes=await messagesModel.find({}).lean()
-        io.emit('messageLogs', mensajes)}
+        io.emit('messageLogs', mensajes)
+        }
         catch(err){
             logger.error(err)
         }

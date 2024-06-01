@@ -1,6 +1,7 @@
 import { productsModel } from "../models/products.model.js"
 import { CustomError } from "../../errors/CustomError.js"
 import { logger } from "../../logger/logger.js"
+import { sendMail } from "../../utils.js"
 
 
 export default class ProductDaoMongo {
@@ -86,6 +87,14 @@ export default class ProductDaoMongo {
     async deleteProduct(pid){       
         try{
             const result=await this.product.findOneAndUpdate({_id:pid}, { status: false }, {new: true,lean:true})
+            if (result.owner!="admin"){
+                await sendMail(
+                    result.owner,
+                    "Producto borrado",
+                    `<p>El producto ${result.title} (ID ${result._id}) fue borrado exitosamente<p/><br/>
+                    <p>Si crees que se trata de un problema, responde este correo<p/>`
+                    )
+            }
             if (!result){
                 CustomError.createError({
                     name:"Product not found",

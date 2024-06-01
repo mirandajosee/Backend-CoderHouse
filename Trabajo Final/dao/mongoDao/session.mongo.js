@@ -7,9 +7,10 @@ export default class UserDaoMongo{
         this.User = usersModel
     }
 
-    async get(by){
+    async get(){
         try {
-            return await this.User.findOne({by}).lean()
+            const users= await this.User.find({}).lean()
+            return users
             
         } catch (error) {
             return  logger.error(error)
@@ -47,6 +48,26 @@ export default class UserDaoMongo{
             }
             return result}
         catch(err){logger.error(err)}
+    }
+
+    async getUnactiveUsers(time){
+        try {
+            const initialDate = new Date(Date.now()-time)
+            const UnactiveUsers= await this.User.find({last_connection:{$lt:initialDate}})
+            return UnactiveUsers
+            
+        } catch (error) {
+            return  logger.error(error)
+        }
+    }
+
+    async deleteById(id){
+        try {
+            return await this.User.findByIdAndDelete(id).lean()
+            
+        } catch (error) {
+            return  logger.error(error)
+        }
     }
 
 

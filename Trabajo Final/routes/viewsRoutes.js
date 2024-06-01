@@ -1,9 +1,10 @@
 import express from "express"
-import { messagesModel } from "../dao/models/messages.model.js";
-import { productService,cartService,userService } from "../repositories/services.js";
-import { CustomError } from "../errors/CustomError.js";
-import { logger } from "../logger/logger.js";
-import { checkToken } from "../utils.js";
+import { messagesModel } from "../dao/models/messages.model.js"
+import { productService,cartService,userService } from "../repositories/services.js"
+import { CustomError } from "../errors/CustomError.js"
+import { logger } from "../logger/logger.js"
+import { checkToken} from "../utils.js"
+import { allow } from "../middleware/authentication.js"
 
 const viewsRouter = express.Router();
 
@@ -33,8 +34,8 @@ viewsRouter.get('/realtimeproducts', async(req, res) => {
 viewsRouter.get('/chat', async(req, res) => {
     try{
     const chat=await messagesModel.find({}).lean()
-    const role=req.session.user.role
-    res.render('chat', { chat,role})}
+    const user=req.session.user
+    res.render('chat', { chat,user})}
     catch(err){
         logger.error(err)
     }
@@ -125,6 +126,15 @@ viewsRouter.get('/:uid/documents', async (req, res)=>{
     catch(err){
         logger.error(err)
     }
+})
+
+viewsRouter.get('/admin', (req,res,next) => allow(req,res,next,["admin"]), async (req, res)=>{
+    try{
+        const users = await userService.get()
+        res.status(200).render('admin',{users:users})}
+        catch(err){
+            logger.error(err||String(err))
+        }
 })
 
 export {viewsRouter}

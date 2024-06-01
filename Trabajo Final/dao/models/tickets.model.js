@@ -26,4 +26,8 @@ const ticketsSchema = new mongoose.Schema({
     }
 },{timestamps: { createdAt: 'purchase_datetime', updatedAt: 'updated_datetime' }})
 
+ticketsSchema.pre('findOne', function () {
+    this.populate('products.product')
+})
+
 export const ticketsModel = mongoose.model(ticketsCollection, ticketsSchema)

@@ -1,6 +1,9 @@
 import { cartService, productService, userService } from "../repositories/services.js"
 import { sendMail } from "../utils.js"
 import { logger } from "../logger/logger.js"
+import {MercadoPagoConfig, Preference} from 'mercadopago'
+
+const client = new MercadoPagoConfig({accessToken:"TEST-8936031347205029-053121-6f7d4d746f03f3cb04aefabf06ff619f-1838927604"})
 
 export class CartController{
     constructor(){}
@@ -154,17 +157,39 @@ export class CartController{
     purchaseCart=async(req, res) =>{
         try{
             const {cid} = req.params
+            const cart = await cartService.getCartById(cid)
+            console.log(req.originalUrl)
+            console.log(req.protocol)
+            console.log(req.hostname)
+            console.log(req.baseUrl)
+            const fullURL = req.protocol + '://' + req.get('host')
+            let MPitems = []
+            for (let prod of cart.products){
+                let product = {title:prod.product.title, quantity:prod.quantity, unit_price:prod.product.price, id:prod.product._id, currency_id:"ARS"}
+                MPitems.push(product)}
+            const MPbody = {
+                back_urls:{
+                    success:fullURL,
+                    failure:fullURL,
+                    pending:fullURL
+                },
+                auto_return:"approved",
+            }
+            MPbody.items=MPitems
+            const preference = new Preference(client)
+            const result = await preference.create({body:MPbody})
             const ticket = await cartService.purchaseCart(cid)
-            const subject = `Gracias por tu compra`
-            const html = `<div><h1>Tu compra fue exitosa</h1><br>
-            <h3>Monto: $${ticket.amount}</h3><br>
-            <h3>Código: ${ticket.code}</h3>`
+            
             const to=ticket.purchaser
+            const subject = `Gracias por tu compra`
+            const html = `<div><h1>Gracias por tu compra</h1><br>
+                <h3>Monto: $${ticket.amount}</h3><br>
+                <h3>Código: ${ticket.code}</h3>
+            `
             await sendMail(to, subject, html)
-            res.send(ticket)
-        }
-        catch(err){
-            logger.error(err)
+            res.send({ticket:ticket, id: result.id})
+        }catch(err){
+            console.log(err)
         }
     }
 

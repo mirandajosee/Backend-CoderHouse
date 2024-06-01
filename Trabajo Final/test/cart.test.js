@@ -2,7 +2,7 @@ import supertest from "supertest";
 import {expect} from "chai"
 
 
-const request = supertest.agent('http://localhost:8080');
+const request = supertest.agent('http://localhost:8080'); //Se deja así pues sólo se usaría en desarrollo, no en productivo
 
 describe('API de carritos', () => {
   const productId="65bf2577eb4489fe2f045df4"
