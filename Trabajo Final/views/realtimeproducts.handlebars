@@ -3,7 +3,7 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <body style="background-color:rgb(170, 142, 228);color:indigo;padding:3%">
-  <div class="form-group w-50" style="display:flex;flex-direction:row ;padding-inline:2%;" >
+  <div class="form-group w-50" style="display:flex;flex-direction:row ;padding-inline:2%;justify-content:center" >
     <form action="/products" method="get">
         <input type="submit" value="Home">
     </form>
@@ -14,6 +14,9 @@
         <input type="submit" value="Cerrar sesión">
     </form>
     </div>
+    <div style="display:flex;justify-content:center">
+    <img src="/mirai.png" alt="Logo de Mirai Ecommerce" width="15%" height="15%" />
+    </div>
     <h1 style="text-align: center;">Productos en tiempo real</h1>
 
     <ul id="productList">
@@ -21,9 +24,8 @@
     <li class="card" style="padding: 1%;"><b>{{this.title}}</b>
     ID {{this._id}} - Precio: ${{this.price}} - Stock {{this.stock}}</li>
   {{/each}}
-</ul>
+    </ul>
 
-{{!-- Formulario para agregar producto desde el front --}}
 
 <form id="productForm" class="form-group w-50" style="margin-top: 3%;">
     <p style="font-style:bold;"><b>¿Desea agregar un producto?</b></p>
@@ -51,7 +53,6 @@
 </form>
 
 
-{{!-- Lo que hace el evento addProduct--}}
 
 <script> 
 const socket = io();
@@ -62,6 +63,7 @@ function addProduct() {
             let thumbnailInput= document.getElementById('productThumbnail')
             let codeInput= document.getElementById('productCode')
             let stockInput= document.getElementById('productStock')
+            let thumbnailHelper = []
 
             const newProductTitle = titleInput.value.trim()
             const newProductDescription = descriptionInput.value.trim()
@@ -70,6 +72,8 @@ function addProduct() {
             const newProductCode = codeInput.value.trim()
             const newProductStock = stockInput.value.trim()
 
+            if (newProductThumbnail){
+            thumbnailHelper.push(newProductThumbnail)}
             if (newProductTitle!== '' && newProductDescription !== '' && newProductPrice !== '' && newProductCode !== ''
             && newProductStock !== '') {
                 
@@ -79,7 +83,7 @@ function addProduct() {
               title: newProductTitle,
               description: newProductDescription,
               price: newProductPrice,
-              thumbnail: newProductThumbnail,
+              thumbnail: thumbnailHelper,
               code: newProductCode,
               stock: newProductStock,
               owner:"{{owner}}"
@@ -96,9 +100,18 @@ function addProduct() {
 let productList = JSON.parse(localStorage.getItem('productList')) || [];
 
 socket.on('updateList', (newProductList) => {
-  productList = newProductList;
-  updateBrowserList(productList);
-  localStorage.setItem('productList', JSON.stringify(productList));
+  productList = newProductList
+  const productLogs = document.getElementById('productList')
+        let cardProduct = ''
+        newProductList.forEach(newProductList => {
+        cardProduct += `<li class="card" style="padding: 1%;">
+          <b>${newProductList.title}</b>
+          ID ${newProductList._id} - Precio: $${newProductList.price} - Stock ${newProductList.stock}
+        </li>` 
+        })
+        productLogs.innerHTML = cardProduct
+  //updateBrowserList(productList)
+  localStorage.setItem('productList', JSON.stringify(productList))
 });
 
 function updateBrowserList(products) {
@@ -113,9 +126,6 @@ function updateBrowserList(products) {
 </script>
 
 
-
-{{!-- Formulario para eliminar producto desde el front --}}
-
 <form id="deleteForm"  class="form-group w-50" style="margin-top: 3%;">
        <p><b>¿Desea eliminar un producto?</b></p>
         <label for="title">Id del Producto:</label>
@@ -123,8 +133,6 @@ function updateBrowserList(products) {
         <button type="button" onclick="deleteProduct()">Eliminar producto</button>
     </form>
 
-
-{{!-- Lo que hace el evento deleteProduct --}}
 
 <script>
 function deleteProduct() {

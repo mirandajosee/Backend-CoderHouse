@@ -149,11 +149,11 @@ components:
         price:
           type: Number
           description: Precio del producto, en pesos argentinos
-        thumbnails:
-          Type: Array
+        thumbnail:
+          type: Array
           description: Imágenes del producto
         code:
-          type: Number
+          type: String
           description: Código del producto (único)
         stock:
           type: Number
@@ -169,7 +169,7 @@ components:
         title: Termo eléctrico
         description: Producto hecho en Argentina, la tapa se usa como mate, dos modos de temperatura
         price: 50000
-        thumbnails: [imagenTermo.jpg]
+        thumbnail: [imagenTermo.jpg]
         code: 5
         stock: 798
         status: true
@@ -189,11 +189,11 @@ components:
         price:
           type: number
           description: Precio del producto
-        thumbnails:
-          Type: array
+        thumbnail:
+          type: array
           description: Imágenes del producto
         code:
-          type: number
+          type: string
           description: Código del producto (único)
         stock:
           type: number
@@ -204,6 +204,13 @@ components:
         owner:
           type: string
           description: Email del creador del producto ("admin" en caso de que sean creados por el administrador)
+      example:
+        title: Mouse gamer
+        description: Producto marca Redragon, con luces led
+        price: 8000
+        thumbnail: [MouseGamer.jpg]
+        code: 14
+        stock: 798
 
     createProduct:
       type: object
@@ -217,11 +224,11 @@ components:
         price:
           type: number
           description: Precio del producto
-        thumbnails:
-          Type: array
+        thumbnail:
+          type: array
           description: Imágenes del producto
         code:
-          type: number
+          type: string
           description: Código del producto (único)
         stock:
           type: number
@@ -229,3 +236,11 @@ components:
         status:
           type: boolean
           description: Estado del producto
+      example:
+        title: Mouse gamer
+        description: Producto marca Redragon, con luces led
+        price: 8000
+        thumbnail: [MouseGamer.jpg]
+        code: 14
+        stock: 798
+        owner: admin

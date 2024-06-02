@@ -18,7 +18,7 @@ const prodSchema = new mongoose.Schema({
     status: {
         type: Boolean,
         default: true},
-    thumbnail: String,
+    thumbnail: Array,
     owner: {type: String,
         default:"admin",
         require:true}

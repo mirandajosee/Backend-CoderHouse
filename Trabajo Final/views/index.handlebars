@@ -24,7 +24,9 @@
         <form action="/{{user.id}}/documents" method="get">
             <input type="submit" value="Subir archivos">
         </form>
+        
     </div>
+    <img src="/mirai.png" alt="Logo de Mirai Ecommerce" width="15%" height="15%" />
     <p>Bienvenido {{user.name}}, tu rol es {{user.role}}</p>
     {{/if }}
     {{#unless user}}
@@ -42,16 +44,19 @@
     <ul style="display:flex;flex-wrap:wrap;justify-content:center">
         {{#if docs}}
             {{#each docs}}
-            <div class="card" style="width: 25%;padding:0.5%;background-color:indigo;color:yellowgreen;margin:1%;justify-content:center" >
-                <p >Nombre: {{this.title}} | Precio: {{this.price}}</p>
-                <button onclick="addToCart(`{{this._id}}`)" class="btn btn-primary">Agregar al carrito</button>
+            <div class="card" style="width: 30%; height:auto;padding:0.5%;background-color:indigo;color:yellowgreen;margin:1%;justify-content:center" >
+                <img src="products/{{this.thumbnail.[0]}}" onerror="this.onerror=null; this.src='products/Default.png';" height="75%" alt="Product image"/>
+                <h3><b>{{this.title}} </b></h3>
+                <h5>Precio: ${{this.price}}</h5>
+                <p>{{this.description}}</p>
+                <button onclick="addToCart(`{{this._id}}`)" class="btn btn-primary" style="">Agregar al carrito</button>
             </div>
             {{/each}}
 
             {{else}}
             {{#each products}}
             <div class="card">
-                <p>Nombre: {{this.title}} | Precio: {{this.price}}</p>
+                <p>Nombre: {{this.title}} | Precio: ${{this.price}}</p>
                 <button onclick="addToCart(`{{this._id}}`)">Agregar al carrito</button>
             </div>
             {{/each}}

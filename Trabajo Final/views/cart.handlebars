@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 
-<body style="background-color:rgb(170, 142, 228);color:honeydew;padding-inline:3%">
+<body style="background-color:rgb(170, 142, 228);color:honeydew;padding-inline:3%;">
     <div class="form-group w-50" style="display:flex;flex-direction:row ;padding-inline:2%;" >
     <form action="/products" method="get">
         <input type="submit" value="Home">
@@ -13,6 +13,9 @@
     <form action="/api/users/logout" method="post">
         <input type="submit" value="Cerrar sesión">
     </form>
+    </div>
+    <div style="display:flex;justify-content:center">
+    <img src="/mirai.png" alt="Logo de Mirai Ecommerce" width="15%" height="15%" />
     </div>
     {{#if cart.products}}
     <h1 style="text-align: center">Productos de tu carrito</h1>

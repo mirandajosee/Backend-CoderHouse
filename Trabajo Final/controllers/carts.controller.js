@@ -158,10 +158,6 @@ export class CartController{
         try{
             const {cid} = req.params
             const cart = await cartService.getCartById(cid)
-            console.log(req.originalUrl)
-            console.log(req.protocol)
-            console.log(req.hostname)
-            console.log(req.baseUrl)
             const fullURL = req.protocol + '://' + req.get('host')
             let MPitems = []
             for (let prod of cart.products){
@@ -177,6 +173,7 @@ export class CartController{
             }
             MPbody.items=MPitems
             const preference = new Preference(client)
+            console.log(preference)
             const result = await preference.create({body:MPbody})
             const ticket = await cartService.purchaseCart(cid)
             
@@ -189,7 +186,7 @@ export class CartController{
             await sendMail(to, subject, html)
             res.send({ticket:ticket, id: result.id})
         }catch(err){
-            console.log(err)
+            logger.error(err||err.message)
         }
     }
 

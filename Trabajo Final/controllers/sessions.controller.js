@@ -110,9 +110,10 @@ export class SessionController{
                 `<h3>No compartas este link con nadie, sólo dura una hora<h3/>
                 <a href=${url}>Recupera tu contraseña aquí<a/>`
                 )
-            res.status(200).send(`Se envío un mail a ${user.email}`)}
+            res.status(200).send(`<h1>Se envío un mail a ${user.email}</h1>`)}
             else{
                 logger.warning("Mail no encontrado en la base")
+                res.redirect("/register")
             }
         }
         catch(err){
@@ -126,7 +127,7 @@ export class SessionController{
             const newPassword = req.body.password
             //const user= await userService.getById(uid)
             await userService.updateUser(uid,{password:createHash(newPassword)})
-            res.status(200).send("Contraseña actualizada")
+            res.status(200).send("<h1>Contraseña actualizada</h1>")
         }
         catch(err){
             logger.error(err||err.message)

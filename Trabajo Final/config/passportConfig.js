@@ -3,9 +3,22 @@ import { Strategy as localStrategy } from 'passport-local'
 import { Strategy as gitHubStrategy} from 'passport-github2'
 import { usersModel } from '../dao/models/user.model.js'
 import { cartsModel } from '../dao/models/carts.model.js'
-import { createHash, isValidPassword } from '../utils.js'
+import { createHash, isValidPassword,env } from '../utils.js'
 import { logger } from '../logger/logger.js'
+import { config as dotenvConfig } from "dotenv"
 
+switch(env){
+    case "PROD": 
+        dotenvConfig({path:'./.env.production'})
+        break;
+
+    case "DEV": 
+        dotenvConfig({path:'./.env.development'})
+        break;
+    default: 
+        dotenvConfig({path:'./.env.production'})
+        break;
+}
 
 export const initializePassport = () => {
     
@@ -54,9 +67,9 @@ export const initializePassport = () => {
     }))
 
     passport.use('github', new gitHubStrategy({
-        clientID:'Iv1.8f720753dc22e47d',
-        clientSecret: '7ed060c74d23550378d2c7204eb41b8bb20ae06b',
-        callbackURL: 'https://backend-coderhouse-production-0a31.up.railway.app/api/users/githubcallback'
+        clientID: process.env.GITHUB_CLIENID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: process.env.GITHUB_CALLBACK_URL
     }, async (accessToken, refreshToken, profile, done)=>{
         try {
                 let user = await usersModel.findOne({email: profile._json.email})
